@@ -1,0 +1,3 @@
+[submodule "external/voxel2mesh"]
+	path = external/voxel2mesh
+	url = https://github.com/taznux/voxel2mesh.git
