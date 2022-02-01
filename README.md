@@ -1,6 +1,8 @@
 # IRT
 Interpretable Radiomics Toolkit
 
+[Dataset](https://mskcc.ent.box.com/s/w9n5ypo48pq3h5lkxwva5vlnwmxzbc05)
+
 ## Pipeline
 ### 1. Nodule Detection
 Using existing model or Assuming detected by radiologist
@@ -10,7 +12,7 @@ Using existing model or Assuming detected by radiologist
 
 ### 2. Nodule Segmentation
 Using [voxel2mesh](external/voxel2mesh) (UNet+mesh decoder)
- 1. Input: Nodule Patch (64x64x64, Isotropic)
+ 1. Input: Nodule Patch (64x64x64, Isotropic) 
  2. Output
     1. Nodule Voxel Mask (64x64x64): UNet and raterized voxel from mesh
     2. Nodule 3D Mesh (Sphere and Nodule): Area Distortion Map
