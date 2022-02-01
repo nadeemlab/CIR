@@ -11,7 +11,7 @@ Using existing model or Assuming detected by radiologist
 
 
 ### 2. Nodule Segmentation
-Using [voxel2mesh](external/voxel2mesh) (UNet+mesh decoder)
+Using [voxel2mesh](https://github.com/taznux/voxel2mesh) (UNet+mesh decoder)
  1. Input: Nodule Patch (64x64x64, Isotropic) 
  2. Output
     1. Nodule Voxel Mask (64x64x64): UNet and raterized voxel from mesh
