@@ -10,8 +10,7 @@ import torch
 from torch.utils.data import Dataset
 
 
-#CLASSES = ['background', 'nodule']
-CLASSES = ['background', 'nodule', 'spiculation', 'lobulation', 'attachment']
+CLASSES = ['background', 'nodule']#, 'spiculation', 'lobulation', 'attachment']
 
 
 
@@ -176,6 +175,7 @@ def create_sub_volumes(ct_image, ard_image, label, peak_label, samples, crop_siz
                 break
     
         filename = filename_prefix + '_s_' + str(i) + '_modality_'
+        pid = filename_prefix.split("/")[-1].split("_")[0]
         list_saved_paths = []
         for j in range(modalities - 1):
             f_t1 = filename + str(j) + '.npy'
@@ -187,7 +187,7 @@ def create_sub_volumes(ct_image, ard_image, label, peak_label, samples, crop_siz
 
         np.save(f_seg, tensor_images[-1])
         list_saved_paths.append(f_seg)
-        list.append(tuple(list_saved_paths))
+        list.append(tuple([pid]+list_saved_paths))
 
     return list
 
@@ -358,16 +358,18 @@ class NoduleDataset(Dataset):
         return len(self.list) 
 
     def __getitem__(self, index):
-        f_ct, f_ard, f_label, f_plabel  = self.list[index]
+        pid, f_ct, f_ard, f_label, f_plabel = self.list[index]
         try:
-            ct_np, ard_np, label_np, plabel_np = np.load(f_ct), np.load(f_ard), np.load(f_label), np.load(f_plabel)
+            #ct_np, ard_np, label_np, plabel_np = np.load(f_ct), np.load(f_ard), np.load(f_label), np.load(f_plabel)
+            ct_np, label_np = np.load(f_ct), np.load(f_label)
         except:
-            pid = f_ct.split("/")[-1].split("_")[0]
             print(pid)
             self.create_volumes(pid)
-            ct_np, ard_np, label_np, plabel_np = np.load(f_ct), np.load(f_ard), np.load(f_label), np.load(f_plabel)
+            #ct_np, ard_np, label_np, plabel_np = np.load(f_ct), np.load(f_ard), np.load(f_label), np.load(f_plabel)
+            ct_np, label_np = np.load(f_ct), np.load(f_label)
 
-        return ct_np, ard_np, label_np, plabel_np
+        #return ct_np, ard_np, label_np, plabel_np
+        return ct_np, label_np[0]
 
 
 if __name__ == "__main__":

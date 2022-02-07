@@ -70,7 +70,7 @@ def main_worker(gpu, args):
         setup(gpu, n_gpus)
 
     orig_model, optimizer = medzoo.create_model(args)
-    criterion = DiceLoss(classes=args.classes)#, weight=torch.tensor([0.5,1]).cuda(gpu)) # ,skip_index_after=2,weight=torch.tensor([0.00001,1,1,1]).cuda())
+    criterion = DiceLoss(classes=args.classes, weight=torch.tensor([0.05,1]).cuda(gpu)) # ,skip_index_after=2,weight=torch.tensor([0.00001,1,1,1]).cuda())
 
     #if gpu == 0:
     #    wandb.watch(orig_model)
@@ -84,7 +84,7 @@ def main_worker(gpu, args):
     
     preprocessing_fn = None
     lidc_dataset = NoduleDataset("/home/wxc151/spiculation/LIDC_spiculation", load=args.loadData)
-    lidc_72_dataset = NoduleDataset("/home/wxc151/spiculation/LIDC_spiculation", load=args.loadData)
+    lidc_72_dataset = NoduleDataset("/home/wxc151/spiculation/LIDC_spiculation", load=True)
     lungx_dataset = NoduleDataset("/home/wxc151/spiculation/LUNGx_spiculation", load=args.loadData)
 
     lidc_72_dataset.list = [x for x in lidc_72_dataset.list if x[0].split("/")[-1].split("_")[0] in selected]
@@ -92,7 +92,7 @@ def main_worker(gpu, args):
     test_dataset = lidc_72_dataset
     ext_test_dataset = lungx_dataset
 
-    train_size = int(0.8 * len(lidc_dataset))
+    train_size = int(0.5 * len(lidc_dataset))
     test_size = len(lidc_dataset) - train_size
     train_dataset, valid_dataset = torch.utils.data.random_split(lidc_dataset, [train_size, test_size])
 
@@ -123,15 +123,15 @@ def main_worker(gpu, args):
 
 def get_arguments():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--batchSz', type=int, default=128)
+    parser.add_argument('--batchSz', type=int, default=32)
     parser.add_argument('--dataset_name', type=str, default="LIDC")
-    parser.add_argument('--dim', nargs="+", type=int, default=(128, 128, 128))
+    parser.add_argument('--dim', nargs="+", type=int, default=(64, 64, 64))
     parser.add_argument('--nEpochs', type=int, default=100)
-    parser.add_argument('--classes', type=int, default=5)
+    parser.add_argument('--classes', type=int, default=2)
     parser.add_argument('--samples_train', type=int, default=1024)
     parser.add_argument('--samples_val', type=int, default=128)
     parser.add_argument('--inChannels', type=int, default=1)
-    parser.add_argument('--inModalities', type=int, default=3)
+    parser.add_argument('--inModalities', type=int, default=1)
     parser.add_argument('--n_gpus', type=int, default=1)
     parser.add_argument('--threshold', default=0.00000000001, type=float)
     parser.add_argument('--terminal_show_freq', default=50)
@@ -146,7 +146,7 @@ def get_arguments():
     parser.add_argument('--loadData', action=argparse.BooleanOptionalAction, default=True)
     parser.add_argument('--resume', default='', type=str, metavar='PATH',
                         help='path to latest checkpoint (default: none)')
-    parser.add_argument('--model', type=str, default='UNET3D',
+    parser.add_argument('--model', type=str, default='VNET',
                         choices=('UNET3D', 'DENSENET1', "UNET2D", 'DENSENET2', 'DENSENET3', 'HYPERDENSENET', "SKIPDENSENET3D",
                         "DENSEVOXELNET", 'VNET', 'VNET2', "RESNET3DVAE", "RESNETMED3D", "COVIDNET1", "COVIDNET2", "CNN",
                         "HIGHRESNET"))

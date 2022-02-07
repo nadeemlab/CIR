@@ -1,7 +1,22 @@
 # IRT
 Interpretable Radiomics Toolkit
 
+## Dataset
 [Dataset](https://mskcc.ent.box.com/s/w9n5ypo48pq3h5lkxwva5vlnwmxzbc05)
+### LIDC_spiculation
+883 cases => train & validation set: 811, test set: 72
+
+### LUNGx_spiculation
+70 cases => calibration set: 10 (5 benign & 5 malignant), test set : 60
+
+### Data preprocessing
+```bash
+# IRT repository
+python train_3d_seg.py --no-loadData # this will start 3D segmentation training after data preprocessing
+cd external/voxel2mesh
+# voxel2mesh - https://github.com/taznux/voxel2mesh
+python data_preprocess.py # this only convert LIDC now
+```
 
 ## Pipeline
 ### 1. Nodule Detection
