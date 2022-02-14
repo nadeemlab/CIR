@@ -2,7 +2,7 @@
 Interpretable Radiomics Toolkit
 
 ## Dataset
-[Dataset](https://mskcc.ent.box.com/s/w9n5ypo48pq3h5lkxwva5vlnwmxzbc05)
+[Dataset](https://mskcc.ent.box.com/s/w9n5ypo48pq3h5lkxwva5vlnwmxzbc05) - Link disables on March 03, 2022. We will put this data someplace else then.
 ### LIDC_spiculation
 883 cases => train & validation set: 811, test set: 72
 
