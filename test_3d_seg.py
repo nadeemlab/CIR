@@ -13,8 +13,10 @@ import lib.medzoo as medzoo
 import lib.train as train
 # Lib files
 import lib.utils as utils
+from lib.utils.general import prepare_input
 from lib.losses3D import DiceLoss
 import lib.visual3D_temp.BaseWriter
+from lib.visual3D_temp.BaseWriter import TensorboardWriter
 
 lib.visual3D_temp.BaseWriter.dict_class_names["LIDC"] = CLASSES
 
@@ -34,70 +36,35 @@ selected = ['LIDC-IDRI-0072', 'LIDC-IDRI-0090', 'LIDC-IDRI-0138', 'LIDC-IDRI-014
             'LIDC-IDRI-0924', 'LIDC-IDRI-0939', 'LIDC-IDRI-0965', 'LIDC-IDRI-0994', 'LIDC-IDRI-1002', 'LIDC-IDRI-1004']
 
 
-def setup(rank, world_size):
-    # initialize the process group
-    dist.init_process_group(
-            backend='nccl',
-            init_method='tcp://127.0.0.1:3456',
-            world_size=world_size,
-            rank=rank)
-
-
-def cleanup():
-    dist.destroy_process_group()
-
 def main():
+    gpu = 0
     args = get_arguments()
+
+    if args.resume == "":
+        print("Please set `--resume`")
+        exit(-1)
+
     utils.reproducibility(args, seed)
-    utils.make_dirs(args.save)
 
-    if args.n_gpus > 1:
-        torch.multiprocessing.spawn(main_worker, nprocs=args.n_gpus, args=(args, ))
-    else:
-        main_worker(0, args)
-
-
-def main_worker(gpu, args):
-    #if gpu == 0:
-    #    wandb.init(project="nodule-segmentation-3D", config=args)
-    
     n_gpus = args.n_gpus
     epochs = args.nEpochs
     batch_size = int(args.batchSz / n_gpus)
     num_worker = int(args.num_worker / n_gpus)
 
-    if n_gpus > 1:
-        setup(gpu, n_gpus)
-
     orig_model, optimizer = medzoo.create_model(args)
+    orig_model.restore_checkpoint(args.resume)
+
     criterion = DiceLoss(classes=args.classes, weight=torch.tensor([0.05,1]).cuda(gpu)) # ,skip_index_after=2,weight=torch.tensor([0.00001,1,1,1]).cuda())
 
-    #if gpu == 0:
-    #    wandb.watch(orig_model)
-    
     torch.cuda.set_device(gpu)
     model = orig_model.cuda(gpu)
-    if n_gpus > 1:
-        model = torch.nn.parallel.DistributedDataParallel(model, device_ids=[gpu])
-        dist.barrier()
 
-    
-    preprocessing_fn = None
-<<<<<<< HEAD
-    lidc_dataset = NoduleDataset("/home/wxc151/spiculation/LIDC_spiculation", load=args.loadData)
-    lidc_72_dataset = NoduleDataset("/home/wxc151/spiculation/LIDC_spiculation", load=True)
-    lungx_dataset = NoduleDataset("/home/wxc151/spiculation/LUNGx_spiculation", load=args.loadData)
-
-    lidc_72_dataset.list = [x for x in lidc_72_dataset.list if x[0].split("/")[-1].split("_")[0] in selected]
-    lidc_dataset.list = [x for x in lidc_dataset.list if x[0].split("/")[-1].split("_")[0] not in selected]
-=======
     lidc_dataset = NoduleDataset("/home/wxc151/data/spiculation/LIDC_spiculation", load=args.loadData)
     lidc_72_dataset = NoduleDataset("/home/wxc151/data/spiculation/LIDC_spiculation", load=True)
     lungx_dataset = NoduleDataset("/home/wxc151/data/spiculation/LUNGx_spiculation", load=args.loadData)
 
     lidc_72_dataset.list = [x for x in lidc_72_dataset.list if x[0].split("/")[-1].split("_")[0] in selected]
     lidc_dataset.list = list(set(lidc_dataset.list) - set(lidc_72_dataset.list))
->>>>>>> develop
     test_dataset = lidc_72_dataset
     ext_test_dataset = lungx_dataset
 
@@ -105,30 +72,40 @@ def main_worker(gpu, args):
     test_size = len(lidc_dataset) - train_size
     train_dataset, valid_dataset = torch.utils.data.random_split(lidc_dataset, [train_size, test_size])
 
-    if n_gpus > 1:
-        train_sampler = torch.utils.data.distributed.DistributedSampler(train_dataset)
-        #valid_sampler = torch.utils.data.distributed.DistributedSampler(valid_dataset)
+    train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=False, num_workers=num_worker)
+    valid_loader = DataLoader(valid_dataset, batch_size=batch_size, shuffle=False, num_workers=num_worker)
+    test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False, num_workers=num_worker)
+    ext_test_loader = DataLoader(ext_test_dataset, batch_size=batch_size, shuffle=False, num_workers=num_worker)
 
-        train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=False, num_workers=num_worker, pin_memory=True, sampler=train_sampler)
-        #valid_loader = DataLoader(valid_dataset, batch_size=batch_size, shuffle=True, num_workers=num_worker, pin_memory=True, sampler=valid_sampler)
-    else:
-        train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True, num_workers=num_worker)
-    valid_loader = DataLoader(valid_dataset, batch_size=batch_size, shuffle=True, num_workers=num_worker)
+    print("START Evaluation...")
+    for name, data_loader in dict(train=train_loader, valid=valid_loader, test=test_loader, ext_test=ext_test_loader).items():
+        print(f"\n {name.capitalize()} set (N={len(data_loader.dataset)}): ", end="")
+        test_model(args, model, criterion, data_loader)
 
-    if gpu == 0:
-        trainer = train.Trainer(args, model, criterion, optimizer, train_data_loader=train_loader, valid_data_loader=valid_loader)
-    else:
-        args.save = None
-        trainer = train.Trainer(args, model, criterion, optimizer, train_data_loader=train_loader)
-
-    print("START TRAINING...")
-    trainer.training()
-
-    if n_gpus > 1:
-        cleanup()
-    #if gpu == 0:
-    #    wandb.finish()
+    # wandb.finish()
     
+
+
+def test_model(args, model, criterion, data_loader):
+    writer = TensorboardWriter(args)
+    model.eval()
+    for batch_idx, input_tuple in enumerate(data_loader):
+        with torch.no_grad():
+            input_tensor, target = prepare_input(input_tuple=input_tuple, args=args)
+            input_tensor.requires_grad = False
+
+            output = model(input_tensor)
+            loss, per_ch_score = criterion(output, target)
+
+            writer.update_scores(batch_idx, loss.item(), per_ch_score, 'val', batch_idx)
+
+    writer.display_terminal(len(data_loader), 0, mode='val', summary=True)
+    val_loss = writer.data['val']['loss'] / writer.data['val']['count']
+    print(f"val loss: {val_loss}")
+    writer.write_end_of_epoch(0)
+    writer.reset('val')
+
+
 
 def get_arguments():
     parser = argparse.ArgumentParser()
@@ -167,8 +144,8 @@ def get_arguments():
     args = parser.parse_args()
 
     args.num_worker = 8
-    args.save = './saved_models/' + args.model + '_checkpoints/' + args.model + '_{}_{}_'.format(
-        utils.datestr(), args.dataset_name)
+    args.save = './evaluations/' + args.model + '_checkpoints/' + args.model + '_{}_{}_'.format(utils.datestr(), args.dataset_name)
+
     return args
 
 
