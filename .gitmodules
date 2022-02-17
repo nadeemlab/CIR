@@ -1,6 +1,6 @@
 [submodule "external/voxel2mesh"]
 	path = external/voxel2mesh
-	url = https://github.com/taznux/voxel2mesh.git
+	url = git@github.com:taznux/voxel2mesh.git
 [submodule "MedicalZooPytorch"]
 	path = external/MedicalZooPytorch
 	url = https://github.com/black0017/MedicalZooPytorch.git
