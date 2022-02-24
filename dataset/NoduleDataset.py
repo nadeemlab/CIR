@@ -194,17 +194,17 @@ def create_sub_volumes(ct_image, ard_image, label, peak_label, samples, crop_siz
 
 def postproc_medical_image(img_np, type=None, normalization='full_volume_mean', clip_intenisty=True, crop_size=(0, 0, 0), crop=(0, 0, 0),):
     # Intensity outlier clipping
-    if clip_intenisty and type != "label":
+    if clip_intenisty and type == "CT":
         img_np = percentile_clip(img_np)
 
     # Intensity normalization
     img_tensor = torch.from_numpy(img_np)
 
     MEAN, STD, MAX, MIN = 0., 1., 1., 0.
-    if type != 'label':
+    if type == 'CT':
         MEAN, STD = img_tensor.mean(), img_tensor.std()
         MAX, MIN = img_tensor.max(), img_tensor.min()
-    if type != "label":
+    if type == "CT":
         img_tensor = normalize_intensity(img_tensor, normalization=normalization, norm_values=(MEAN, STD, MAX, MIN))
     img_tensor = crop_img(img_tensor, crop_size, crop)
     return img_tensor
