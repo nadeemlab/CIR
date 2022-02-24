@@ -2,7 +2,7 @@
 Interpretable Radiomics Toolkit
 
 ## Dataset
-[Dataset](https://mskcc.ent.box.com/s/w9n5ypo48pq3h5lkxwva5vlnwmxzbc05)
+[Dataset](https://mskcc.ent.box.com/s/w9n5ypo48pq3h5lkxwva5vlnwmxzbc05) - Link disables on March 03, 2022. We will put this data someplace else then.
 ### LIDC_spiculation
 883 cases => train & validation set: 811, test set: 72
 
@@ -41,20 +41,3 @@ Using [voxel2mesh](https://github.com/taznux/voxel2mesh) (UNet+mesh decoder)
 ### 4. Nodule Classification
  1. Input: Deep features, Spiculation features, etc.  
  2. Output: Benign or Malignant
-
-
-## TODO
-1. [ ] Nodule Detection
-    1. [ ] Create an interface to connect existing detectors including [pylidc](https://pylidc.github.io/) and lungx database
-2. [ ] Nodule Segmentation
-   1. [ ] Angle Preserve Deformation - add a loss component
-      1. [ ] CPU computation for testing
-      2. [ ] GPU computation using [PyTorch3D](https://pytorch3d.org/)
-   2. [ ] Improve code quality - [MeshRCNN](https://github.com/facebookresearch/meshrcnn)
-3. [ ] Spiculation Quantification 
-   1. [ ] Recursive searching algorithm in matlab -> ?
-
-4. [ ] Nodule Classification
-   1. [ ] A simple classifier using two FC layer
-   2. [ ] ?
-
