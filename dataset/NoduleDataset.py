@@ -10,7 +10,7 @@ import torch
 from torch.utils.data import Dataset
 
 
-CLASSES = ['background', 'nodule']#, 'spiculation', 'lobulation', 'attachment']
+CLASSES = ['background', 'nodule', 'spiculation', 'lobulation']#, 'attachment']
 
 
 
@@ -373,4 +373,4 @@ class NoduleDataset(Dataset):
 
 
 if __name__ == "__main__":
-    data = NoduleDataset("~/spiculation/LUNGx_spiculation")
+    data = NoduleDataset("DATA/LUNGx_spiculation")
