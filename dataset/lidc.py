@@ -162,7 +162,6 @@ class LIDC():
             sample_pids = []
  
             for j in counts[i]: 
-                print('.',end='', flush=True)
                 pid = pids[j]
                 x = inputs[j]
                 y = labels[j]
@@ -191,11 +190,11 @@ class LIDC():
         metadata = pd.read_csv(data_root+"/../LIDC_nodule_info.csv")
         metadata = metadata.query("NID==1")
         ambiguos = (metadata.Malignancy == 3) & (~metadata.PID.isin(selected))
-        metadata.loc[:, "Malignancy"] = (metadata.Malignancy > 3).values.copy()
+        metadata.Malignancy = metadata.Malignancy > 3
         metadata = metadata.loc[~ambiguos]
         metadata1 = pd.read_csv(data_root+"/../LIDC-outcome_new.csv")
         samples = glob.glob(f"{data_root}LIDC*s_0*0.npy")
-        samples = [sample for sample in samples if sample.split("/")[-1].split("_")[0] not in metadata.PID.values]
+        samples = [sample for sample in samples if sample.split("/")[-1].split("_")[0] in metadata.PID.values]
         
         pids = []
         inputs = []
@@ -226,8 +225,8 @@ class LIDC():
 
         print('\nSaving pre-processed data to disk')
         np.random.seed(34234)
-        train_val_idx = [x for x in range(len(inputs)) if pids[x] not in selected]
-        test_idx = [x for x in range(len(inputs)) if pids[x] in selected]
+        train_val_idx = [x for x in range(len(pids)) if pids[x] not in selected]
+        test_idx = [x for x in range(len(pids)) if pids[x] in selected]
         perm = np.random.permutation(train_val_idx) 
         counts = [perm[:len(train_val_idx)//2], perm[len(train_val_idx)//2:], test_idx]
  
@@ -240,7 +239,6 @@ class LIDC():
             sample_pids = []
  
             for j in counts[i]: 
-                print('.',end='', flush=True)
                 pid = pids[j]
                 x = inputs[j]
                 y = labels[j]

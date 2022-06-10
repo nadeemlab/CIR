@@ -1,14 +1,15 @@
-import os  
+import os
+import sys
 import logging
 import torch
 import numpy as np
-from utils.train import Trainer
-from utils.evaluate import Evaluator  
 
 import torch.optim as optim
 from torch.utils.data import DataLoader
 import wandb
 
+from utils.train import Trainer
+from utils.evaluate import Evaluator  
 from config import load_config
 from model.voxel2mesh_nodule import Voxel2Mesh as network
 
@@ -23,7 +24,7 @@ def init(cfg):
 
     save_path = cfg.save_path + cfg.save_dir_prefix + str(cfg.experiment_idx).zfill(3)
     
-    mkdir(save_path) 
+    os.makedirs(save_path, exist_ok=True) 
  
     trial_id = (len([dir for dir in os.listdir(save_path) if 'trial' in dir]) + 1) if cfg.trial_id is None else cfg.trial_id
     trial_save_path = save_path + '/trial_' + str(trial_id) 

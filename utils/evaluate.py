@@ -1,3 +1,4 @@
+import sys
 import numpy as np
 from skimage import io 
 import torch
@@ -5,6 +6,8 @@ import torch.nn.functional as F
 from torch.utils.data import DataLoader
 from sklearn.metrics import confusion_matrix, roc_curve, auc
 import wandb
+
+sys.path.append("external/voxel2mesh")
 
 from utils.utils_common import DataModes, mkdir, blend_cpu, append_line, write_lines 
 from utils.utils_voxel2mesh.file_handle import save_to_obj  
