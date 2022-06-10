@@ -6,11 +6,13 @@ import pickle
 import torch
 import pandas as pd
 from tqdm import tqdm
+
 from dataset.data import get_item, sample_to_sample_plus
 from utils.metrics import jaccard_index
 
 from external.voxel2mesh.utils.utils_common import DataModes
 from external.voxel2mesh.utils.metrics import chamfer_weighted_symmetric
+
 
 selected = ['LIDC-IDRI-0072', 'LIDC-IDRI-0090', 'LIDC-IDRI-0138', 'LIDC-IDRI-0149', 'LIDC-IDRI-0162', 'LIDC-IDRI-0163',
             'LIDC-IDRI-0166', 'LIDC-IDRI-0167', 'LIDC-IDRI-0168', 'LIDC-IDRI-0171', 'LIDC-IDRI-0178', 'LIDC-IDRI-0180',

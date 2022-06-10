@@ -10,18 +10,16 @@ import numpy as np
 from itertools import combinations, chain
 from scipy.spatial import ConvexHull
 
-
-from utils.utils_common import crop_and_merge  
-from utils.utils_voxel2mesh.graph_conv import adjacency_matrix, Features2Features, Feature2VertexLayer 
-from utils.utils_voxel2mesh.feature_sampling import LearntNeighbourhoodSampling 
-from utils.utils_voxel2mesh.file_handle import read_obj 
-
-
-from utils.utils_unet import UNetLayer
-from utils.angle_distortions import angle_distortions
-from utils.area_distortions import area_distortions
-
 import wandb
+
+from external.voxel2mesh.utils.utils_common import crop_and_merge  
+from external.voxel2mesh.utils.utils_voxel2mesh.graph_conv import adjacency_matrix, Features2Features, Feature2VertexLayer 
+from external.voxel2mesh.utils.utils_voxel2mesh.feature_sampling import LearntNeighbourhoodSampling 
+from external.voxel2mesh.utils.utils_voxel2mesh.file_handle import read_obj 
+
+from external.voxel2mesh.utils.utils_unet import UNetLayer
+from external.voxel2mesh.utils.angle_distortions import angle_distortions
+from external.voxel2mesh.utils.area_distortions import area_distortions
   
 def deformation_dist(vertices, faces_prev, N_prev):
     vertices_primary = vertices[0,:N_prev, :]

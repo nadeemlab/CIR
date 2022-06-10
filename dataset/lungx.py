@@ -9,7 +9,6 @@ from dataset.lidc import *
 
 from dataset.data import sample_to_sample_plus
 from external.voxel2mesh.utils.utils_common import DataModes
-  
 
 class LUNGx(LIDC):
     def quick_load_data(self, cfg, trial_id):
@@ -89,7 +88,6 @@ class LUNGx(LIDC):
             new_samples = sample_to_sample_plus(samples, cfg, datamode)
             with open(data_root + '/pre_computed_data_{}_{}.pickle'.format(datamode, "_".join(map(str, down_sample_shape))), 'wb') as handle:
                 pickle.dump((new_samples, samples, sample_pids, metadata), handle, protocol=pickle.HIGHEST_PROTOCOL)
-
             data[datamode] = LIDCDataset(samples, sample_pids, metadata, cfg, datamode)
         
         print('Pre-processing complete') 
