@@ -83,9 +83,9 @@ def main_worker(gpu, args):
 
     
     preprocessing_fn = None
-    lidc_dataset = NoduleDataset("/home/wxc151/data/spiculation/LIDC_spiculation", load=args.loadData)
-    lidc_72_dataset = NoduleDataset("/home/wxc151/data/spiculation/LIDC_spiculation", load=True)
-    lungx_dataset = NoduleDataset("/home/wxc151/data/spiculation/LUNGx_spiculation", load=args.loadData)
+    lidc_dataset = NoduleDataset("DATA/LIDC_spiculation", load=args.loadData)
+    lidc_72_dataset = NoduleDataset("DATA/LIDC_spiculation", load=True)
+    lungx_dataset = NoduleDataset("DATA/LUNGx_spiculation", load=args.loadData)
 
     lidc_72_dataset.list = [x for x in lidc_72_dataset.list if x[0].split("/")[-1].split("_")[0] in selected]
     lidc_dataset.list = list(set(lidc_dataset.list) - set(lidc_72_dataset.list))
