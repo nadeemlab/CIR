@@ -7,9 +7,8 @@ from tqdm import tqdm
 
 from dataset.lidc import *
 
-from data.data import sample_to_sample_plus
-from utils.utils_common import DataModes
-  
+from dataset.data import sample_to_sample_plus
+from external.voxel2mesh.utils.utils_common import DataModes
 
 class LUNGx(LIDC):
     def quick_load_data(self, cfg, trial_id):
@@ -18,10 +17,10 @@ class LUNGx(LIDC):
 
         data_root = cfg.ext_dataset_path
         data = {}
-        for i, datamode in enumerate([DataModes.TRAINING, DataModes.TESTING]):
+        for datamode in [DataModes.TRAINING, DataModes.TESTING]:
+            print("LUNGx", datamode, 'dataset')
             with open(data_root + '/pre_computed_data_{}_{}.pickle'.format(datamode, "_".join(map(str, down_sample_shape))), 'rb') as handle:
-                samples, sample_pids, metadata = pickle.load(handle)
-                new_samples = sample_to_sample_plus(samples, cfg, datamode)
+                new_samples, samples, sample_pids, metadata = pickle.load(handle)
                 data[datamode] = LIDCDataset(new_samples, sample_pids, metadata, cfg, datamode) 
 
         return data
@@ -72,7 +71,6 @@ class LUNGx(LIDC):
             sample_pids = []
  
             for j in counts[i]: 
-                print('.',end='', flush=True)
                 pid = pids[j]
                 x = inputs[j]
                 y = labels[j]
@@ -86,11 +84,10 @@ class LUNGx(LIDC):
             else:
                 metadata = metadata.iloc[10:]
             metadata.loc[:, "Malignancy"] = metadata.malignancy > 0
-            metadata = metadata.dropna()
             print(metadata)
+            new_samples = sample_to_sample_plus(samples, cfg, datamode)
             with open(data_root + '/pre_computed_data_{}_{}.pickle'.format(datamode, "_".join(map(str, down_sample_shape))), 'wb') as handle:
-                pickle.dump((samples, sample_pids, metadata), handle, protocol=pickle.HIGHEST_PROTOCOL) 
-
+                pickle.dump((new_samples, samples, sample_pids, metadata), handle, protocol=pickle.HIGHEST_PROTOCOL)
             data[datamode] = LIDCDataset(samples, sample_pids, metadata, cfg, datamode)
         
         print('Pre-processing complete') 

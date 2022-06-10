@@ -16,12 +16,12 @@ def area_distortions(mesh_orig, mesh_param):
     faces_packed_param = mesh_param.faces_packed()  # (sum(F_n), 3)
 
     num_verts_per_mesh_orig = mesh_orig.num_verts_per_mesh()  # (N,)
-    verts_packed_idx_orig = mesh_orig.verts_packed_to_mesh_idx()  # (sum(V_n),)
+    #verts_packed_idx_orig = mesh_orig.verts_packed_to_mesh_idx()  # (sum(V_n),)
     num_verts_per_mesh_param = mesh_param.num_verts_per_mesh()  # (N,)
-    verts_packed_idx_param = mesh_param.verts_packed_to_mesh_idx()  # (sum(V_n),)
+    #verts_packed_idx_param = mesh_param.verts_packed_to_mesh_idx()  # (sum(V_n),)
     assert num_verts_per_mesh_orig == num_verts_per_mesh_param, "Different numbers of vertices"
-    weights = num_verts_per_mesh_orig.gather(0, verts_packed_idx_orig)  # (sum(V_n),)
-    weights = 1.0 / weights.float()
+    #weights = num_verts_per_mesh_orig.gather(0, verts_packed_idx_orig)  # (sum(V_n),)
+    #weights = 1.0 / weights.float()
 
     with torch.no_grad():
         area_orig = compute_per_vertex_area(verts_packed_orig,faces_packed_orig)
@@ -49,7 +49,7 @@ def compute_per_vertex_area(V,F):
     ab = torch.cross(a,b)
     Af = torch.sqrt(torch.sum(ab**2,1))
     # area of each vertex
-    m = torch.arange(F.size(0))
+    m = torch.arange(F.size(0), device = V.device)
     U = torch.sparse_coo_tensor(torch.vstack([m.repeat(3), F.flatten()]), Af.repeat(3))
     Av = torch.sparse.sum(U, 0).to_dense()
 
