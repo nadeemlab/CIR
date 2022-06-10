@@ -10,7 +10,7 @@ from utils.evaluate import Evaluator
 from config import load_config
 from model.voxel2mesh_nodule import Voxel2Mesh as network
 
-from utils.utils_common import mkdir
+from external.voxel2mesh.utils.utils_common import mkdir
 
 
 logger = logging.getLogger(__name__)
@@ -67,12 +67,12 @@ def main():
     data_obj = cfg.data_obj 
     data_obj_ext = cfg.data_obj_ext 
     data = data_obj.quick_load_data(cfg, trial_id)
-    data_wo3 = data_obj.quick_load_data_wo3(cfg, trial_id)
+    #data_wo3 = data_obj.quick_load_data_wo3(cfg, trial_id)
     data_ext = data_obj_ext.quick_load_data(cfg, trial_id)
     
     print("Initialize evaluator")
     evaluator = Evaluator(classifier, optimizer, data, trial_path, cfg, data_obj) 
-    evaluator_wo3 = Evaluator(classifier, optimizer, data_wo3, trial_path, cfg, data_obj) 
+    #evaluator_wo3 = Evaluator(classifier, optimizer, data_wo3, trial_path, cfg, data_obj) 
     evaluator_ext = Evaluator(classifier, optimizer, data_ext, trial_path, cfg, data_obj_ext) 
 
     print("Loading pretrained network")
@@ -84,8 +84,8 @@ def main():
 
     print("LIDC_123vs45")
     evaluator.evaluate_all(epoch)
-    print("LIDC_12vs45")
-    evaluator_wo3.evaluate_all(epoch)
+    #print("LIDC_12vs45")
+    #evaluator_wo3.evaluate_all(epoch)
     print("LUNGx")
     evaluator_ext.evaluate_all(epoch)
 

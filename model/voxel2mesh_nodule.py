@@ -7,11 +7,9 @@ from pytorch3d.ops import sample_points_from_meshes, SubdivideMeshes
 from pytorch3d.loss import (chamfer_distance,  mesh_edge_loss, mesh_laplacian_smoothing, mesh_normal_consistency)
 
 import numpy as np
-from itertools import product, combinations, chain
+from itertools import combinations, chain
 from scipy.spatial import ConvexHull
 
-from IPython import embed 
-import time
 
 from utils.utils_common import crop_and_merge  
 from utils.utils_voxel2mesh.graph_conv import adjacency_matrix, Features2Features, Feature2VertexLayer 

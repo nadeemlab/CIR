@@ -79,6 +79,6 @@ def load_config():
     cfg.eval_every = 1000 # saves results to disk
 
     # ''' Rreporting '''
-    # cfg.wab = False # use weight and biases for reporting
+    cfg.wab = False # use weight and biases for reporting
     
     return cfg

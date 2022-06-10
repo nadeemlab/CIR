@@ -13,8 +13,7 @@ from utils.evaluate import Evaluator
 from config import load_config
 from model.voxel2mesh_nodule import Voxel2Mesh as network
 
-from utils.utils_common import DataModes
-from utils.utils_common import mkdir
+from external.voxel2mesh.utils.utils_common import DataModes, mkdir
 
 
 logger = logging.getLogger(__name__)
@@ -54,8 +53,8 @@ def main():
     classifier = network(cfg)
     classifier.cuda(cfg.device)
  
-
-    wandb.init(name='Experiment_{}/trial_{}'.format(cfg.experiment_idx, trial_id), project="vm-net", dir=trial_path)
+    if cfg.wab:
+        wandb.init(name='Experiment_{}/trial_{}'.format(cfg.experiment_idx, trial_id), project="vm-net", dir=trial_path)
  
     print("Initialize optimizer")
     optimizer = optim.Adam(filter(lambda p: p.requires_grad, classifier.parameters()), lr=cfg.learning_rate)  
@@ -72,7 +71,7 @@ def main():
     evaluator = Evaluator(classifier, optimizer, data, trial_path, cfg, data_obj) 
 
     print("Initialize trainer")
-    trainer = Trainer(classifier, loader, optimizer, cfg.numb_of_itrs, cfg.eval_every, trial_path, evaluator)
+    trainer = Trainer(classifier, loader, optimizer, trial_path, evaluator, cfg)
 
     if cfg.trial_id is not None:
         print("Loading pretrained network")

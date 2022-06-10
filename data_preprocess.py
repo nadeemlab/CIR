@@ -15,7 +15,7 @@ def main():
 
     # Run pre-processing
     data = data_obj.pre_process_dataset(cfg)
-    data_wo3 = data_obj.pre_process_dataset_wo3(cfg)
+    #data_wo3 = data_obj.pre_process_dataset_wo3(cfg)
     data_ext = data_obj_ext.pre_process_dataset(cfg)
 
 if __name__ == "__main__": 

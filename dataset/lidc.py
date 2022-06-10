@@ -1,4 +1,3 @@
-import sys
 import numpy as np
 
 import glob
@@ -7,13 +6,11 @@ import pickle
 import torch
 import pandas as pd
 from tqdm import tqdm
+from dataset.data import get_item, sample_to_sample_plus
+from utils.metrics import jaccard_index
 
-sys.path.append("external/voxel2mesh")
-
-from data.data import get_item, sample_to_sample_plus
-from utils.metrics import jaccard_index, chamfer_weighted_symmetric
-from utils.utils_common import DataModes
-
+from external.voxel2mesh.utils.utils_common import DataModes
+from external.voxel2mesh.utils.metrics import chamfer_weighted_symmetric
 
 selected = ['LIDC-IDRI-0072', 'LIDC-IDRI-0090', 'LIDC-IDRI-0138', 'LIDC-IDRI-0149', 'LIDC-IDRI-0162', 'LIDC-IDRI-0163',
             'LIDC-IDRI-0166', 'LIDC-IDRI-0167', 'LIDC-IDRI-0168', 'LIDC-IDRI-0171', 'LIDC-IDRI-0178', 'LIDC-IDRI-0180',
@@ -87,11 +84,10 @@ class LIDC():
 
         data_root = cfg.dataset_path
         data = {}
-        for i, datamode in enumerate([DataModes.TRAINING, DataModes.VALIDATION, DataModes.TESTING]):
+        for datamode in [DataModes.TRAINING, DataModes.VALIDATION, DataModes.TESTING]:
+            print("LIDC", datamode, 'dataset')
             with open(data_root + '/pre_computed_data_{}_{}.pickle'.format(datamode, "_".join(map(str, down_sample_shape))), 'rb') as handle:
-                samples, sample_pids, metadata = pickle.load(handle)
-                #samples, sample_pids  = samples[0:10], sample_pids[0:10]
-                new_samples = sample_to_sample_plus(samples, cfg, datamode)
+                new_samples, samples, sample_pids, metadata = pickle.load(handle)
                 data[datamode] = LIDCDataset(new_samples, sample_pids, metadata, cfg, datamode) 
 
         return data
@@ -102,11 +98,10 @@ class LIDC():
 
         data_root = cfg.dataset_path
         data = {}
-        for i, datamode in enumerate([DataModes.TRAINING, DataModes.VALIDATION]):
+        for datamode in [DataModes.TRAINING, DataModes.VALIDATION]:
+            print("LIDC without class 3", datamode, 'dataset')
             with open(data_root + '/pre_computed_data_{}_{}_wo3.pickle'.format(datamode, "_".join(map(str, down_sample_shape))), 'rb') as handle:
-                samples, sample_pids, metadata = pickle.load(handle)
-                #samples, sample_pids  = samples[0:10], sample_pids[0:10]
-                new_samples = sample_to_sample_plus(samples, cfg, datamode)
+                new_samples, samples, sample_pids, metadata = pickle.load(handle)
                 data[datamode] = LIDCDataset(new_samples, sample_pids, metadata, cfg, datamode) 
 
         return data
@@ -176,9 +171,9 @@ class LIDC():
             else:
                 metadata_ = metadata.loc[metadata.PID.isin(sample_pids)]
             print(metadata_)
-
+            new_samples = sample_to_sample_plus(samples, cfg, datamode)
             with open(data_root + '/pre_computed_data_{}_{}.pickle'.format(datamode, "_".join(map(str, down_sample_shape))), 'wb') as handle:
-                pickle.dump((samples, sample_pids, metadata_), handle, protocol=pickle.HIGHEST_PROTOCOL)
+                pickle.dump((new_samples, samples, sample_pids, metadata_), handle, protocol=pickle.HIGHEST_PROTOCOL)
 
             data[datamode] = LIDCDataset(samples, sample_pids, metadata_, cfg, datamode)
         
