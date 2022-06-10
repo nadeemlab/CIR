@@ -8,6 +8,7 @@ import numpy as np
 import SimpleITK as sitk
 import torch
 from torch.utils.data import Dataset
+from tqdm import tqdm
 
 
 CLASSES = ['background', 'nodule', 'spiculation', 'lobulation']#, 'attachment']
@@ -343,14 +344,14 @@ class NoduleDataset(Dataset):
         make_dirs(self.sub_vol_path)
 
         studies = glob.glob(f"{self.root_dir}/*/")
+        studies = [study for study in studies if study.find("generated") < 0] # remove generated folders
         #print(studies)
-        print("Dataset samples: ", len(studies))
-        for i, study in enumerate(studies):
-            pid = osp.basename(study[:-1]) # '[:-1]' is to remove the last '/'
-            if pid.find("generated") >= 0:
-                continue
-            print(pid, end=" ", flush=True)
-            self.create_volumes(pid)
+        print(osp.basename(self.root_dir), "Dataset: ", len(studies))
+        with tqdm(studies) as pbar:
+            for study in pbar:
+                pid = osp.basename(study[:-1]) # '[:-1]' is to remove the last '/'
+                pbar.set_description("Processing %s" % pid)
+                self.create_volumes(pid)
 
         save_list(self.save_name, self.list)     
 
