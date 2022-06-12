@@ -74,7 +74,7 @@ class Evaluator(object):
             self.write_to_wandb(epoch, split, performences,
                                 self.config.num_classes)
 
-        if self.support.update_checkpoint(best_so_far=self.current_best, new_value=performences):
+        if epoch > 10 and self.support.update_checkpoint(best_so_far=self.current_best, new_value=performences):
             mkdir(self.save_path)
             mkdir(self.save_path + '/mesh')
             mkdir(self.save_path + '/voxels')

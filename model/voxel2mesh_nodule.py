@@ -255,7 +255,8 @@ class Voxel2Mesh(nn.Module):
                     pred[k][i+1][1] = faces
                     pred[k][i+1][2] = latent_features
                     pred[k][i+1][4] = sphere_vertices
-            
+        
+        # malignancy classification
         features = []
         for k in range(self.config.num_classes-1):
             vertices = pred[k][i+1][0]
@@ -283,9 +284,10 @@ class Voxel2Mesh(nn.Module):
         angle_distortion_loss = torch.tensor(0).float().cuda(self.config.device)  
         area_distortion_loss = torch.tensor(0).float().cuda(self.config.device)  
 
+        # malignancy classification
         target = F.one_hot((data['metadata']['Malignancy']).long().cuda(self.config.device), 2)
-        loss = nn.BCELoss()#eight=torch.tensor([0.1, 1]).cuda(self.config.device)  )
-        bce_loss += loss(output, target[0].float())
+        BCE_Loss = nn.BCELoss()#eight=torch.tensor([0.1, 1]).cuda(self.config.device)  )
+        bce_loss += BCE_Loss(output, target[0].float())
 
         for c in range(self.config.num_classes-1):
             CE_Loss = nn.CrossEntropyLoss() 

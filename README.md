@@ -10,6 +10,15 @@ Interpretable Radiomics Toolkit
 70 cases => calibration set: 10 (5 benign & 5 malignant), test set : 60
 
 
+## Installation
+
+```bash
+pip install torch torchvision torchaudio --extra-index-url https://download.pytorch.org/whl/cu113
+# pytorch3d https://github.com/facebookresearch/pytorch3d/blob/main/INSTALL.md#3-install-wheels-for-linux
+pip install --no-index --no-cache-dir pytorch3d -f https://dl.fbaipublicfiles.com/pytorch3d/packaging/wheels/py38_cu113_pyt1110/download.html
+pip wandb sklearn sckit-image ipython ninja pandas opencv-python
+```
+
 ## Usage
 
 
@@ -22,6 +31,12 @@ https://mskcc.box.com/s/19twc0iu4po8trk2iz8azkk5s5jvp50n
 Data Preprocessing step2  
 https://mskcc.box.com/s/q9krcoja4amyjv16kk9ew0z7lklq0zd6  
 
+```bash
+mkdir DATA
+tar xjvf data.tar.bz2 -C DATA
+tar xjvf data_preproc1.tar.bz2 -C DATA
+tar xjvf data_preproc2.tar.bz2 -C DATA
+```
 
 `DATA/LIDC_spiculation`  
 `DATA/LUNGx_spiculation`

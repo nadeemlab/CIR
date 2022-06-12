@@ -73,12 +73,12 @@ def load_config():
   
     ''' Optimizer '''
     cfg.learning_rate = 1e-4
+    cfg.weight_decay = 1e-6
 
     ''' Training '''
-    cfg.numb_of_itrs = 300000
-    cfg.eval_every = 1000 # saves results to disk
+    cfg.numb_of_epochs = 300
 
     # ''' Rreporting '''
-    cfg.wab = False # use weight and biases for reporting
+    cfg.wab = True # use weight and biases for reporting
     
     return cfg
