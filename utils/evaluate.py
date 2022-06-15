@@ -40,18 +40,16 @@ class Evaluator(object):
         if self.config.wab:
             log_vals = {"epoch": epoch}
             for key, value in performences[split].items():
-                log_vals[split + '_' + key +
-                         '/mean'] = np.nanmean(performences[split][key])
+                log_vals[split + '_' + key + '/mean'] = np.nanmean(performences[split][key])
                 try:
                     for i in range(1, num_classes):
-                        log_vals[split + '_' + key + '/class_' +
-                                 str(i)] = np.nanmean(performences[split][key][:, i - 1])
-                except:
-                    print('')
+                        log_vals[split + '_' + key + '/class_' + str(i)] = np.nanmean(performences[split][key][:, i - 1])
+                except: # measures without classes
+                    pass
             try:
                 wandb.log(log_vals)
-            except:
-                print('')
+            except Exception as ex:
+                print(ex)
 
     def save_model(self, epoch):
 
@@ -72,8 +70,7 @@ class Evaluator(object):
             performences[split], predictions[split] = self.evaluate_set(
                 dataloader)
 
-            self.write_to_wandb(epoch, split, performences,
-                                self.config.num_classes)
+            self.write_to_wandb(epoch, split, performences, self.config.num_classes)
 
         if epoch > 10 and self.support.update_checkpoint(best_so_far=self.current_best, new_value=performences):
             mkdir(self.save_path)
@@ -224,8 +221,8 @@ class Evaluator(object):
         performance['sensitivity'] = sensitivity if sensitivity is not None else 0
         performance['specificity'] = specificity if specificity is not None else 0
 
-        print('\nTestset Accuracy(mean): %f %%' % (100 * acc), end=", ")
-        print('\nTestset AUC: %f' % auc_)
+        print('\nTestset Accuracy(mean): %f%%' % (100 * acc), end=", ")
+        print('Testset AUC: %f' % auc_)
         print()
         print('Confusion Matirx : ')
         print(CM)
@@ -290,10 +287,9 @@ class Evaluator(object):
 
                     all_results = [('{}: ' + ', '.join(['{:.8f}' for _ in range(self.config.num_classes-1)])).format(
                         *((i+1,) + tuple(vals))) for i, vals in enumerate(performence[key])]
-                    write_lines(save_path + mode + 'all_results_' +
-                                key + '.txt', all_results)
-                except:
-                    print("")
+                    write_lines(save_path + mode + 'all_results_' + key + '.txt', all_results)
+                except: # measures without classes
+                    pass
 
         xs = torch.cat(xs, dim=0).cpu()
         if y_hat.voxel is not None:
