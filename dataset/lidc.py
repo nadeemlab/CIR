@@ -275,7 +275,7 @@ class LIDC():
                 if target_points[i].size()[1] == 0:
                     val_chamfer_weighted_symmetric[i] = 0
                 else:
-                    val_chamfer_weighted_symmetric[i] = chamfer_weighted_symmetric(target_points[i].cpu(), pred_points[i]['vertices'])
+                    val_chamfer_weighted_symmetric[i] = chamfer_weighted_symmetric(target_points[i], pred_points[i]['vertices'])
 
 
             results['chamfer_weighted_symmetric'] = val_chamfer_weighted_symmetric

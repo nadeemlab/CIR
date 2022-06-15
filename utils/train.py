@@ -1,5 +1,6 @@
 import logging
 import wandb
+from tqdm import tqdm
 
 logger = logging.getLogger(__name__)
 
@@ -33,28 +34,36 @@ class Trainer(object):
         print("Start training...")
 
         self.net = self.net.train()
-        print_every = 1
+        print_every = 10
+        log_vals = {}
         for epoch in range(start_epoch, 10000):  # loop over the dataset multiple times
-            
-            for itr, data in enumerate(self.trainloader):
-                iteration = epoch * len(self.trainloader) + itr
-                
-                # training step
-                loss = self.training_step(data, start_epoch)
+            with tqdm(self.trainloader, unit="sample") as tepoch:
+                for itr, data in enumerate(tepoch):
+                    tepoch.set_description(f"Epoch {epoch}")
+                    iteration = (epoch - 1) * len(self.trainloader) + itr
+                    
+                    # training step
+                    loss = self.training_step(data, start_epoch)
 
-                if iteration % print_every == 0:
-                    log_vals = {}
-                    for key, value in loss.items():
-                        log_vals[key] = value / print_every
-                    log_vals['iteration'] = iteration
+                    if iteration % print_every == print_every-1:
+                        for key, value in log_vals.items():
+                            log_vals[key] = value / print_every
+                        log_vals['iteration'] = iteration
+                        if self.config.wab:
+                            wandb.log(log_vals)
+                        tepoch.set_postfix(loss=log_vals['loss'].cpu().numpy())
+                        log_vals = {}
+                    else:
+                        for key, value in loss.items():
+                            try:
+                                log_vals[key] += value
+                            except:
+                                log_vals[key] = value
 
-                if self.config.wab:
-                    wandb.log(log_vals)
+                self.evaluator.evaluate(epoch)
+                self.net = self.net.train()
 
-            self.evaluator.evaluate(epoch)
-            self.net = self.net.train()
-
-            if epoch > self.numb_of_epochs:
-                break
+                if epoch > self.numb_of_epochs:
+                    break
 
         logger.info("... end training!")
