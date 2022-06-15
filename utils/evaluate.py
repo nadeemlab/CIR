@@ -215,22 +215,29 @@ class Evaluator(object):
         sensitivity = tp/(tp+fn)
         specificity = tn/(tn+fp)
         precision = tp/(tp+fp)
+        npv = tn/(tn+fn)
+        f1 = (2*sensitivity*precision)/(sensitivity+precision)
+        
+        if precision != precision:
+            precision = 0
+        if f1 != f1:
+            f1 = 0
 
         performance['auc'] = auc_
         performance['accuracy'] = acc
         performance['sensitivity'] = sensitivity if sensitivity is not None else 0
         performance['specificity'] = specificity if specificity is not None else 0
 
-        print('\nTestset Accuracy(mean): %f%%' % (100 * acc), end=", ")
-        print('Testset AUC: %f' % auc_)
+        print('\nTestset Accuracy(mean): %0.2f%%' % (100 * acc), end=", ")
+        print('Testset AUC: %0.4f' % auc_)
         print()
         print('Confusion Matirx : ')
         print(CM)
-        print('Sensitivity : ', (tp/(tp+fn))*100, end=", ")
-        print('Specificity : ', (tn/(tn+fp))*100, end=", ")
-        print('Precision: ', (tp/(tp+fp))*100, end=", ")
-        print('NPV: ', (tn/(tn+fn))*100, end=", ")
-        print('F1 : ', ((2*sensitivity*precision)/(sensitivity+precision))*100)
+        print('Sensitivity : %0.2f%%' % (sensitivity*100), end=", ")
+        print('Specificity : %0.2f%%' % (specificity*100), end=", ")
+        print('NPV: %0.2f%%' % (npv*100), end=", ")
+        print('Precision: %0.2f%%' % (precision*100), end=", ")
+        print('F1 : %0.2f%%' % (f1*100))
         print()
 
         for key, value in performance.items():
