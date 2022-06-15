@@ -5,6 +5,7 @@ import torch.nn.functional as F
 from torch.utils.data import DataLoader
 from sklearn.metrics import confusion_matrix, roc_curve, auc
 import wandb
+from tqdm import tqdm
 
 from utils.blend import blend_cpu
 
@@ -74,7 +75,7 @@ class Evaluator(object):
             self.write_to_wandb(epoch, split, performences,
                                 self.config.num_classes)
 
-        if self.support.update_checkpoint(best_so_far=self.current_best, new_value=performences):
+        if epoch > 10 and self.support.update_checkpoint(best_so_far=self.current_best, new_value=performences):
             mkdir(self.save_path)
             mkdir(self.save_path + '/mesh')
             mkdir(self.save_path + '/voxels')
@@ -123,10 +124,10 @@ class Evaluator(object):
         if name == 'unet':
             with torch.no_grad():
                 y_hat = self.net(data)
-                y_hat = torch.argmax(y_hat, dim=1).cpu()
+                y_hat = torch.argmax(y_hat, dim=1)
 
                 x = data['x']
-                y = Structure(voxel=data['y_voxels'].cpu())
+                y = Structure(voxel=data['y_voxels'])
                 y_hat = Structure(voxel=y_hat)
 
         elif name == 'voxel2mesh':
@@ -144,11 +145,11 @@ class Evaluator(object):
                 for c in range(self.config.num_classes-1):
                     # embed()
 
-                    pred_vertices = pred[c][-1][0].detach().data.cpu()
-                    pred_faces = pred[c][-1][1].detach().data.cpu()
-                    sphr_vertices = pred[c][-1][4].detach().data.cpu()
-                    true_vertices = data['vertices_mc'][c].data.cpu()
-                    true_faces = data['faces_mc'][c].data.cpu()
+                    pred_vertices = pred[c][-1][0].detach().data
+                    pred_faces = pred[c][-1][1].detach().data
+                    sphr_vertices = pred[c][-1][4].detach().data
+                    true_vertices = data['vertices_mc'][c].data
+                    true_faces = data['faces_mc'][c].data
 
                     pred_meshes += [{'vertices': pred_vertices,
                                      'faces': pred_faces, 'normals': None}]
@@ -156,7 +157,7 @@ class Evaluator(object):
                                      'faces': pred_faces, 'normals': None}]
                     true_meshes += [{'vertices': true_vertices,
                                      'faces': true_faces, 'normals': None}]
-                    true_points += [data['surface_points'][c].data.cpu()]
+                    true_points += [data['surface_points'][c].data]
 
                     _, _, D, H, W = x.shape
                     shape = torch.tensor([D, H, W]).int().cuda(config.device)
@@ -166,9 +167,9 @@ class Evaluator(object):
 
                     pred_voxels += pred_voxels_rasterized
 
-                true_voxels = data['y_voxels'].data.cpu()
+                true_voxels = data['y_voxels'].data
 
-                x = x.detach().data.cpu()
+                x = x.detach().data
                 target = data['metadata']['Malignancy']
                 y = Structure(mesh=true_meshes, voxel=true_voxels,
                               points=true_points, malignant=target[0])
@@ -184,20 +185,23 @@ class Evaluator(object):
 
         labels = []
         preds = []
-        for i, data in enumerate(dataloader):
+        with tqdm(dataloader, unit="sample") as teval:
+            for i, data in enumerate(teval):
+                teval.set_description(f"Evaluation")
+                x, y, y_hat = self.predict(data, self.config)
+                result = self.support.evaluate(y, y_hat, self.config)
 
-            x, y, y_hat = self.predict(data, self.config)
-            result = self.support.evaluate(y, y_hat, self.config)
+                labels.append(y.malignant.detach().cpu().numpy())
+                preds.append(y_hat.malignant.detach().cpu().numpy())
 
-            labels.append(y.malignant.detach().cpu().numpy())
-            preds.append(y_hat.malignant.detach().cpu().numpy())
+                predictions.append((x, y, y_hat))
 
-            predictions.append((x, y, y_hat))
-
-            for key, value in result.items():
-                if key not in performance:
-                    performance[key] = []
-                performance[key].append(result[key])
+                for key, value in result.items():
+                    if key not in performance:
+                        performance[key] = []
+                    performance[key].append(result[key])
+                    
+                #teval.set_postfix(**performance)
 
         labels = np.asarray(labels)
         preds = np.asarray(preds)
@@ -220,16 +224,16 @@ class Evaluator(object):
         performance['sensitivity'] = sensitivity if sensitivity is not None else 0
         performance['specificity'] = specificity if specificity is not None else 0
 
-        print('\nTestset Accuracy(mean): %f %%' % (100 * acc))
+        print('\nTestset Accuracy(mean): %f %%' % (100 * acc), end=", ")
         print('\nTestset AUC: %f' % auc_)
         print()
         print('Confusion Matirx : ')
         print(CM)
-        print('- Sensitivity : ', (tp/(tp+fn))*100)
-        print('- Specificity : ', (tn/(tn+fp))*100)
-        print('- Precision: ', (tp/(tp+fp))*100)
-        print('- NPV: ', (tn/(tn+fn))*100)
-        print('- F1 : ', ((2*sensitivity*precision)/(sensitivity+precision))*100)
+        print('Sensitivity : ', (tp/(tp+fn))*100, end=", ")
+        print('Specificity : ', (tn/(tn+fp))*100, end=", ")
+        print('Precision: ', (tp/(tp+fp))*100, end=", ")
+        print('NPV: ', (tn/(tn+fn))*100, end=", ")
+        print('F1 : ', ((2*sensitivity*precision)/(sensitivity+precision))*100)
         print()
 
         for key, value in performance.items():

@@ -133,8 +133,8 @@ class LIDC():
                     y = torch.from_numpy(np.load(sample.replace("0.npy", "seg.npy"))) # peak segmenation with nodule area
                     y1 = torch.from_numpy(np.load(sample.replace("0.npy", "1.npy"))[0]) # area distortion map
                     y2 = torch.from_numpy(np.load(sample.replace("0.npy", "2.npy"))[0]) # nodule segmentation
-                    y = (2*(y == 2).type(torch.uint8) + (y == 3).type(torch.uint8)) * (y1 <= 0).type(torch.uint8) # peaks
-                    y = 3*y2 - y.type(torch.uint8) # apply nodule mask
+                    y = (2*(y == 2).type(torch.uint8) + (y == 3).type(torch.uint8)) * (y1 <= 0).type(torch.uint8) # peaks - (spiculation=2 + lobulation=1) in negative ard
+                    y = 3*y2 - y.type(torch.uint8) # apply nodule mask - 3 nodule, 2 lobulation, 1 spiculation
                     
                     #y[y==1] = 5 # nodule
                     #y[y==2] = 1 # spiculation
@@ -275,7 +275,7 @@ class LIDC():
                 if target_points[i].size()[1] == 0:
                     val_chamfer_weighted_symmetric[i] = 0
                 else:
-                    val_chamfer_weighted_symmetric[i] = chamfer_weighted_symmetric(target_points[i].cpu(), pred_points[i]['vertices'])
+                    val_chamfer_weighted_symmetric[i] = chamfer_weighted_symmetric(target_points[i], pred_points[i]['vertices'])
 
 
             results['chamfer_weighted_symmetric'] = val_chamfer_weighted_symmetric

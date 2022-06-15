@@ -40,10 +40,8 @@ def init(cfg):
 
 
 def main():
-    exp_id = 4 
-
     # Initialize
-    cfg = load_config(exp_id)
+    cfg = load_config()
     
     if cfg.trial_id == None:
         print("Please set `trial_id` in config.py to test")
