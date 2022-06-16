@@ -67,13 +67,13 @@ def load_config():
 
 
     cfg.num_classes = 4
-    cfg.batch_norm = True  
+    cfg.batch_norm = False  
     cfg.graph_conv_layer_count = 4
 
   
     ''' Optimizer '''
     cfg.learning_rate = 1e-4
-    cfg.weight_decay = 1e-6
+    cfg.weight_decay = 0#1e-6
 
     ''' Training '''
     cfg.numb_of_epochs = 300

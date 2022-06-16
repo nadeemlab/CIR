@@ -19,7 +19,29 @@ from external.voxel2mesh.utils.utils_common import crop_and_merge
 from external.voxel2mesh.utils.utils_voxel2mesh.graph_conv import adjacency_matrix, Features2Features, Feature2VertexLayer 
 from external.voxel2mesh.utils.utils_voxel2mesh.feature_sampling import LearntNeighbourhoodSampling 
 from external.voxel2mesh.utils.utils_voxel2mesh.file_handle import read_obj 
-from external.voxel2mesh.utils.utils_unet import UNetLayer
+
+class UNetLayer(nn.Module):
+    """ U-Net Layer """
+    def __init__(self, num_channels_in, num_channels_out, ndims, batch_norm=False):
+
+        super(UNetLayer, self).__init__()
+
+        conv_op = nn.Conv2d if ndims == 2 else nn.Conv3d
+
+        conv1 = conv_op(num_channels_in,  num_channels_out, kernel_size=3, padding=1)
+        conv2 = conv_op(num_channels_out, num_channels_out, kernel_size=3, padding=1)
+
+        if batch_norm:
+            batch_nrom_op = nn.BatchNorm2d if ndims == 2 else nn.BatchNorm3d
+            
+            bn1 = batch_nrom_op(num_channels_out)
+            bn2 = batch_nrom_op(num_channels_out)
+            self.unet_layer = nn.Sequential(conv1, bn1, nn.ReLU(), conv2, bn2, nn.ReLU())
+        else:
+            self.unet_layer = nn.Sequential(conv1, nn.ReLU(), conv2, nn.ReLU())
+
+    def forward(self, x):
+        return self.unet_layer(x)
  
 def deformation_dist(vertices, faces_prev, N_prev):
     vertices_primary = vertices[0,:N_prev, :]
