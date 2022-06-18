@@ -1,4 +1,3 @@
-import sys
 import os
 import glob
 import shutil
@@ -10,9 +9,9 @@ import torch
 from torch.utils.data import Dataset
 from tqdm import tqdm
 
-
+#           0             1         2              3               4
 CLASSES = ['background', 'nodule', 'spiculation', 'lobulation']#, 'attachment']
-
+MODALITIES = ['CT', 'ard', 'nodule', 'peaks']
 
 
 def crop_img(img_tensor, crop_size, crop):
@@ -175,19 +174,15 @@ def create_sub_volumes(ct_image, ard_image, label, peak_label, samples, crop_siz
                 tensor_images = [crop_img(images[j], crop_size, crop) for j in range(modalities)]
                 break
     
-        filename = filename_prefix + '_s_' + str(i) + '_modality_'
+        filename = filename_prefix + '_s_' + str(i) + '_'
         pid = filename_prefix.split("/")[-1].split("_")[0]
         list_saved_paths = []
-        for j in range(modalities - 1):
-            f_t1 = filename + str(j) + '.npy'
+        for j in range(modalities):
+            f_t1 = filename + MODALITIES[j] + '.npy'
             list_saved_paths.append(f_t1)
 
             np.save(f_t1, tensor_images[j])
-
-        f_seg = filename + 'seg.npy'
-
-        np.save(f_seg, tensor_images[-1])
-        list_saved_paths.append(f_seg)
+            
         list.append(tuple([pid]+list_saved_paths))
 
     return list
@@ -297,7 +292,7 @@ class NoduleDataset(Dataset):
     def create_volumes(self, pid):
         # LIDC-IDRI-0001_CT_1-all.nrrd  <- CT image
         # LIDC-IDRI-0001_CT_1-all-ard.nrrd  <- Area Distortion Map
-        # LIDC-IDRI-0001_CT_1-all-label.nrrd  <- Nodule Contour
+        # LIDC-IDRI-0001_CT_1-all-label.nrrd  <- Nodule Segmentation
         # LIDC-IDRI-0001_CT_1-all-peaks-label.nrrd  <- Spiculation:1, Lobulation: 2, Attachment: 3
 
         ard_file = glob.glob(f"{self.root_dir}/{pid}/{pid}_CT_*-ard.nrrd")[0]

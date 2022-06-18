@@ -20,16 +20,9 @@ def init(cfg):
 
     save_path = cfg.save_path + cfg.save_dir_prefix + str(cfg.experiment_idx).zfill(3)
     
-    mkdir(save_path) 
- 
-    trial_id = (len([dir for dir in os.listdir(save_path) if 'trial' in dir]) + 1) if cfg.trial_id is None else cfg.trial_id
+    trial_id = (len([dir for dir in os.listdir(save_path) if 'trial' in dir])) if cfg.trial_id is None else cfg.trial_id
     trial_save_path = save_path + '/trial_' + str(trial_id) 
 
-    if not os.path.isdir(trial_save_path):
-        mkdir(trial_save_path) 
-        #copytree(os.getcwd(), trial_save_path + '/source_code', ignore=ignore_patterns('*.git','*.txt','*.tif', '*.pkl', '*.off', '*.so', '*.json','*.jsonl','*.log','*.patch','*.yaml','wandb','run-*'))
-
-  
     seed = trial_id
     np.random.seed(seed)
     torch.manual_seed(seed)
@@ -43,20 +36,18 @@ def main():
     # Initialize
     cfg = load_config()
     
-    if cfg.trial_id == None:
-        print("Please set `trial_id` in config.py to test")
+    trial_path, trial_id = init(cfg) 
+    
+    if cfg.trial_id == 0:
+        print("There no trial to test")
         exit(-1)
         
-    trial_path, trial_id = init(cfg) 
  
     print('Experiment ID: {}, Trial ID: {}'.format(cfg.experiment_idx, trial_id))
 
     print("Create network")
     classifier = network(cfg)
     classifier.cuda(cfg.device)
- 
-
-    wandb.init(name='Experiment_{}/trial_{}'.format(cfg.experiment_idx, trial_id), project="vm-net", dir=trial_path)
  
     print("Initialize optimizer")
     optimizer = optim.Adam(filter(lambda p: p.requires_grad, classifier.parameters()), lr=cfg.learning_rate)  
@@ -79,6 +70,8 @@ def main():
     classifier.load_state_dict(checkpoint['model_state_dict'])
     optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
     epoch = checkpoint['epoch']
+    
+    wandb.init(name='Experiment_{}/trial_{}/epoch_{}_test'.format(cfg.experiment_idx, trial_id, epoch), project="vm-net", dir=trial_path)
 
     print("LIDC_123vs45")
     evaluator.evaluate_all(epoch)

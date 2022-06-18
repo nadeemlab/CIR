@@ -13,6 +13,7 @@ from utils.metrics import jaccard_index
 from external.voxel2mesh.utils.utils_common import DataModes
 from external.voxel2mesh.utils.metrics import chamfer_weighted_symmetric
 
+MODALITIES = ['CT', 'ard', 'peaks', 'nodule']
 
 selected = ['LIDC-IDRI-0072', 'LIDC-IDRI-0090', 'LIDC-IDRI-0138', 'LIDC-IDRI-0149', 'LIDC-IDRI-0162', 'LIDC-IDRI-0163',
             'LIDC-IDRI-0166', 'LIDC-IDRI-0167', 'LIDC-IDRI-0168', 'LIDC-IDRI-0171', 'LIDC-IDRI-0178', 'LIDC-IDRI-0180',
@@ -114,7 +115,7 @@ class LIDC():
         metadata = metadata.query("NID==1")
         metadata.loc[:, "Malignancy"] = (metadata.Malignancy > 3).values.copy()
         metadata1 = pd.read_csv(data_root+"/../LIDC-outcome_new.csv")
-        samples = glob.glob(f"{data_root}LIDC*s_0*0.npy")
+        samples = glob.glob(f"{data_root}LIDC*s_0*CT.npy")
  
         pids = []
         inputs = []
@@ -130,9 +131,9 @@ class LIDC():
                     pids += [pid]
                     x = torch.from_numpy(np.load(sample)[0])
                     inputs += [x]
-                    y = torch.from_numpy(np.load(sample.replace("0.npy", "seg.npy"))) # peak segmenation with nodule area
-                    y1 = torch.from_numpy(np.load(sample.replace("0.npy", "1.npy"))[0]) # area distortion map
-                    y2 = torch.from_numpy(np.load(sample.replace("0.npy", "2.npy"))[0]) # nodule segmentation
+                    y = torch.from_numpy(np.load(sample.replace("CT.npy", "peaks.npy"))) # peak segmenation with nodule area
+                    y1 = torch.from_numpy(np.load(sample.replace("CT.npy", "ard.npy"))[0]) # area distortion map
+                    y2 = torch.from_numpy(np.load(sample.replace("CT.npy", "nodule.npy"))[0]) # nodule segmentation
                     y = (2*(y == 2).type(torch.uint8) + (y == 3).type(torch.uint8)) * (y1 <= 0).type(torch.uint8) # peaks - (spiculation=2 + lobulation=1) in negative ard
                     y = 3*y2 - y.type(torch.uint8) # apply nodule mask - 3 nodule, 2 lobulation, 1 spiculation
                     
@@ -148,7 +149,7 @@ class LIDC():
         train_val_idx = [x for x in range(len(inputs)) if pids[x] not in selected]
         test_idx = [x for x in range(len(inputs)) if pids[x] in selected]
         perm = np.random.permutation(train_val_idx) 
-        counts = [perm[:len(train_val_idx)//2], perm[len(train_val_idx)//2:], test_idx]
+        counts = [perm[:len(train_val_idx)//10*8], perm[len(train_val_idx)//10*8:], test_idx]
  
         data = {}
         down_sample_shape = cfg.patch_shape

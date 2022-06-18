@@ -27,8 +27,8 @@ class LUNGx(LIDC):
 
     def pre_process_dataset(self, cfg):
         data_root = cfg.ext_dataset_path
-        samples_train = glob.glob(f"{data_root}CT-Training*s_0*0.npy")
-        samples_test = glob.glob(f"{data_root}LUNGx*s_0*0.npy")
+        samples_train = glob.glob(f"{data_root}CT-Training*s_0*CT.npy")
+        samples_test = glob.glob(f"{data_root}LUNGx*s_0*CT.npy")
  
         pids = []
         inputs = []
@@ -44,9 +44,9 @@ class LUNGx(LIDC):
                     pids += [pid]
                     x = torch.from_numpy(np.load(sample)[0])
                     inputs += [x]
-                    y = torch.from_numpy(np.load(sample.replace("0.npy", "seg.npy"))) # peak segmenation with nodule area
-                    y1 = torch.from_numpy(np.load(sample.replace("0.npy", "1.npy"))[0]) # area distortion map
-                    y2 = torch.from_numpy(np.load(sample.replace("0.npy", "2.npy"))[0]) # nodule segmentation
+                    y = torch.from_numpy(np.load(sample.replace("CT.npy", "peaks.npy"))) # peak segmenation with nodule area
+                    y1 = torch.from_numpy(np.load(sample.replace("CT.npy", "ard.npy"))[0]) # area distortion map
+                    y2 = torch.from_numpy(np.load(sample.replace("CT.npy", "nodule.npy"))[0]) # nodule segmentation
                     y = (2*(y == 2).type(torch.uint8) + (y == 3).type(torch.uint8)) * (y1 <= 0).type(torch.uint8) # peaks
                     y = 3*y2 - y.type(torch.uint8) # apply nodule mask
                     
