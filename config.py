@@ -56,7 +56,12 @@ def load_config():
 
     cfg.ndims = 3
     cfg.augmentation_shift_range = 10
-
+    
+    ''' Malignancy Classifier '''
+    # Set to True to use encoder features in addition to mesh features for
+    # Malignancy classification
+    cfg.deep_features_classifier = False #True
+    
     ''' Model '''
     cfg.first_layer_channels = 16
     cfg.num_input_channels = 1
