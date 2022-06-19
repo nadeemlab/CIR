@@ -78,7 +78,7 @@ class LUNGx(LIDC):
                 samples.append(Sample(x, y)) 
                 sample_pids.append(pid)
 
-            metadata = pd.read_csv(data_root + "/../LUNGx.csv")
+            metadata = pd.read_csv(data_root + "../LUNGx.csv")
             if datamode == DataModes.TRAINING:
                 metadata = metadata.iloc[0:10]
             else:

@@ -26,9 +26,9 @@ def load_config():
     cfg.dataset_path = './DATA/LIDC_spiculation/generated_vol_iso64x64x64/' # UPDATE HERE <<<<<<<<<<<<<<<<<<<<<<
     cfg.ext_dataset_path = './DATA/LUNGx_spiculation/generated_vol_iso64x64x64/' # UPDATE HERE <<<<<<<<<<<<<<<<<<<<<<
     
-    # cfg.save_path = '/your/path/to/experiments/MICCAI2022/' # results will be saved here
-    # cfg.dataset_path = '/your/path/to/dataset' # path to the dataset
-    # cfg.ext_dataset_path = '/your/path/to/dataset' # path to the dataset for external validation
+    #cfg.save_path = './experiments/MICCAI2022/' # results will be saved here
+    #cfg.dataset_path = '/data/MSKCC-Intern-2021/Spiculation/Spiculation_Projects/LIDC-IDRI_spiculation/generated_vol_iso64x64x64' # path to the dataset
+    #cfg.ext_dataset_path = '/data/MSKCC-Intern-2021/Spiculation/Spiculation_Projects/LUNGx_spiculation/generated_vol_iso64x64x64' # path to the dataset for external validation
 
     # Initialize data object for. 
     # LIDC() for LIDC-IDRI and LUNGx() for LUNGx dataset. 
@@ -56,7 +56,12 @@ def load_config():
 
     cfg.ndims = 3
     cfg.augmentation_shift_range = 10
-
+    
+    ''' Malignancy Classifier '''
+    # Set to True to use encoder features in addition to mesh features for
+    # Malignancy classification
+    cfg.deep_features_classifier = True
+    
     ''' Model '''
     cfg.first_layer_channels = 16
     cfg.num_input_channels = 1

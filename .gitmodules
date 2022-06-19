@@ -1,3 +1,4 @@
 [submodule "external/voxel2mesh"]
 	path = external/voxel2mesh
 	url = https://github.com/cvlab-epfl/voxel2mesh.git
+	ignore=dirty

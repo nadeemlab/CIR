@@ -111,10 +111,10 @@ class LIDC():
 
     def pre_process_dataset(self, cfg):
         data_root = cfg.dataset_path
-        metadata = pd.read_csv(data_root+"/../LIDC_nodule_info.csv")
+        metadata = pd.read_csv(data_root+"../LIDC_nodule_info.csv")
         metadata = metadata.query("NID==1")
         metadata.loc[:, "Malignancy"] = (metadata.Malignancy > 3).values.copy()
-        metadata1 = pd.read_csv(data_root+"/../LIDC-outcome_new.csv")
+        metadata1 = pd.read_csv(data_root+"../LIDC-outcome_new.csv")
         samples = glob.glob(f"{data_root}LIDC*s_0*CT.npy")
  
         pids = []
@@ -185,7 +185,9 @@ class LIDC():
     
     def pre_process_dataset_wo3(self, cfg):
         data_root = cfg.dataset_path
-        metadata = pd.read_csv(data_root+"/../LIDC_nodule_info.csv")
+        print(data_root)
+        #metadata = pd.read_csv(data_root+"/../LIDC_nodule_info.csv")
+        metadata = pd.read_csv(data_root+"/LIDC_nodule_info.csv")
         metadata = metadata.query("NID==1")
         ambiguos = (metadata.Malignancy == 3) & (~metadata.PID.isin(selected))
         metadata.Malignancy = metadata.Malignancy > 3

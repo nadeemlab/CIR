@@ -146,8 +146,12 @@ class Voxel2Mesh(nn.Module):
         self.decoder_std_conv = nn.Sequential(*chain(*up_std_conv_layers))
         self.decoder_f2f = nn.Sequential(*chain(*up_f2f_layers))
         self.decoder_f2v = nn.Sequential(*chain(*up_f2v_layers))
-
-        self.fc1 = nn.Linear(1000*32*3, 512)
+        
+        if self.config.deep_features_classifier is False:
+            self.fc1 = nn.Linear(1000*32*3, 512)
+        else:
+            self.fc1 = nn.Linear(1000*32*3 + 256*4*4*4, 512)
+          
         self.fc2 = nn.Linear(512, 128)
         self.fc3 = nn.Linear(128, 2)
 
@@ -181,8 +185,12 @@ class Voxel2Mesh(nn.Module):
             x = self.max_pool(x)
             x = unet_layer(x) 
             down_outputs.append(x)
-
-  
+        
+        # If using deep features in addition to mesh features for malignancy classification,
+        # then pass encoder feratures to classifier as well
+        if self.config.deep_features_classifier is True:
+            enc_features = down_outputs[-1]
+          
         A, D = adjacency_matrix(vertices, faces)
         pred = [None] * self.config.num_classes 
         for k in range(self.config.num_classes-1):
@@ -285,7 +293,12 @@ class Voxel2Mesh(nn.Module):
             faces = pred[k][i+1][1]
             latent_features = pred[k][i+1][2]
             features.append(latent_features[:, 0:1000])
-        x = torch.concat(features,2).flatten()
+        
+        # Optionally use encoder features for malignancy classification
+        if self.config.deep_features_classifier is False:
+            x = torch.concat(features,2).flatten()
+        else:
+            x = torch.concat((torch.concat(features,2).flatten(), enc_features.flatten()), 0)
         x = F.relu(self.fc1(x))
         x = F.relu(self.fc2(x))
         x = F.softmax(self.fc3(x), dim=0)
