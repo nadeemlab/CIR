@@ -71,3 +71,13 @@ https://mskcc.box.com/s/t7svvzumdvj8lnsy1wlg6pd1acx3zp3d
     tar xjvf CIRDataset_pickle_for_voxel2mesh.tar.bz2
     ```
 
+## Reference
+If you find our work useful in your research or if you use parts of this code, please cite our paper:
+```
+@article{choi2022cirdataset,
+  title={CIRDataset: A large-scale Dataset and benchmark for Clinically-Interpretable lung nodule Radiomics and malignancy prediction},
+  author={Choi, Wookjin and Dahiya, Navdeep and Nadeem, Saad},
+  journal={International Conference on Medical Image Computing and Computer-Assisted Intervention (MICCAI)},
+  year={2022},
+}
+```
