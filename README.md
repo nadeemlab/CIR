@@ -67,7 +67,7 @@ Step 2.2: Divide datasets into subsets (Training, Validation, Testing), extract 
 ```
 
 ## Acknowledgments
-* This code builds on [Voxel2Mesh](https://github.com/cvlab-epfl/voxel2mesh).
+* This code is inspired by [Voxel2Mesh](https://github.com/cvlab-epfl/voxel2mesh).
 
 ## Reference
 If you find our work useful in your research or if you use parts of this code, please cite our paper:
