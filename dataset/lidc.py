@@ -111,10 +111,10 @@ class LIDC():
 
     def pre_process_dataset(self, cfg):
         data_root = cfg.dataset_path
-        metadata = pd.read_csv(data_root+"../LIDC_nodule_info.csv")
+        metadata = pd.read_csv(data_root+"../LIDC.csv")
         metadata = metadata.query("NID==1")
         metadata.loc[:, "Malignancy"] = (metadata.Malignancy > 3).values.copy()
-        metadata1 = pd.read_csv(data_root+"../LIDC-outcome_new.csv")
+        metadata72 = pd.read_csv(data_root+"../LIDC72.csv")
         samples = glob.glob(f"{data_root}LIDC*s_0*CT.npy")
  
         pids = []
@@ -170,7 +170,7 @@ class LIDC():
             if datamode == DataModes.TESTING:
                 metadata_ = metadata.loc[metadata.PID.isin(sample_pids)]
                 metadata_.loc[:, "Malignancy_weak"] = metadata_.Malignancy
-                metadata_.loc[:, "Malignancy"] = metadata1.malignancy.values == 2
+                metadata_.loc[:, "Malignancy"] = metadata72.PMalignancy.values == 2
             else:
                 metadata_ = metadata.loc[metadata.PID.isin(sample_pids)]
             print(metadata_)
@@ -185,14 +185,12 @@ class LIDC():
     
     def pre_process_dataset_wo3(self, cfg):
         data_root = cfg.dataset_path
-        print(data_root)
-        #metadata = pd.read_csv(data_root+"/../LIDC_nodule_info.csv")
-        metadata = pd.read_csv(data_root+"/LIDC_nodule_info.csv")
+        metadata = pd.read_csv(data_root+"../LIDC.csv")
         metadata = metadata.query("NID==1")
         ambiguos = (metadata.Malignancy == 3) & (~metadata.PID.isin(selected))
-        metadata.Malignancy = metadata.Malignancy > 3
+        metadata.Malignancy = metadata.Malignancy > 3 # Radiological Malignancy (RM)
         metadata = metadata.loc[~ambiguos]
-        metadata1 = pd.read_csv(data_root+"/../LIDC-outcome_new.csv")
+        metadata72 = pd.read_csv(data_root+"../LIDC72.csv")
         samples = glob.glob(f"{data_root}LIDC*s_0*0.npy")
         samples = [sample for sample in samples if sample.split("/")[-1].split("_")[0] in metadata.PID.values]
         
@@ -248,8 +246,8 @@ class LIDC():
 
             if datamode == DataModes.TESTING:
                 metadata_ = metadata.loc[metadata.PID.isin(sample_pids)]
-                metadata_.loc[:, "Malignancy_weak"] = metadata_.Malignancy
-                metadata_.loc[:, "Malignancy"] = metadata1.malignancy.values == 2
+                metadata_.loc[:, "Malignancy_weak"] = metadata_.Malignancy # Radiological Malignancy (RM)
+                metadata_.loc[:, "Malignancy"] = metadata72.PMalignancy.values > 1 # Pathological Malignancy (PM)
             else:
                 metadata_ = metadata.loc[metadata.PID.isin(sample_pids)]
             print(metadata_)

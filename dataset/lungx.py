@@ -83,7 +83,7 @@ class LUNGx(LIDC):
                 metadata = metadata.iloc[0:10]
             else:
                 metadata = metadata.iloc[10:]
-            metadata.loc[:, "Malignancy"] = metadata.malignancy > 0
+            metadata.loc[:, "Malignancy"] = metadata.PMalignancy > 1 # Pathological Malignancy (PM)
             print(metadata)
             new_samples = sample_to_sample_plus(samples, cfg, datamode)
             with open(data_root + '/pre_computed_data_{}_{}.pickle'.format(datamode, "_".join(map(str, down_sample_shape))), 'wb') as handle:
