@@ -29,7 +29,7 @@ Step 4: Test the trained model. `python test.py`
 Pre-processed data will be save at the dataset directory.
 
 Step 2.0: Generate nrrd files using LungCancerScreeningRadiomics
-- Lung nodule spiculation data can be generated from the scratch using  [LungCancerScreeninigRaiomics](https://github.com/taznux/LungCancerScreeningRadiomics) for LIDC-IDRI and LUNGx dataset.  
+- Lung nodule spiculation data can be generated from the scratch using  [LungCancerScreeninigRadiomics](https://github.com/taznux/LungCancerScreeningRadiomics) for LIDC-IDRI and LUNGx dataset.  
 
 - Preprocessed data is also available
 https://mskcc.box.com/s/t7svvzumdvj8lnsy1wlg6pd1acx3zp3d  
