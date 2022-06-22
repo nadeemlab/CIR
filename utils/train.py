@@ -63,7 +63,7 @@ class Trainer(object):
                 self.evaluator.evaluate(epoch)
                 self.net = self.net.train()
 
-                if epoch > self.numb_of_epochs:
+                if epoch >= self.numb_of_epochs:
                     break
 
         logger.info("... end training!")
