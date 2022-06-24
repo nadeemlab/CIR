@@ -88,6 +88,7 @@ class Evaluator(object):
         predictions = {}
 
         for split in [DataModes.TRAINING, DataModes.VALIDATION, DataModes.TESTING]:
+            print("\n", split)
             try:
                 dataloader = DataLoader(
                     self.data[split], batch_size=1, shuffle=False)
@@ -112,7 +113,6 @@ class Evaluator(object):
             mkdir(self.save_path + '/mesh')
             mkdir(self.save_path + '/voxels')
 
-            self.save_model(epoch)
             self.save_results(
                 predictions[split], epoch, performences[split], self.save_path, split)
 
@@ -225,19 +225,22 @@ class Evaluator(object):
 
         performance['auc'] = auc_
         performance['accuracy'] = acc
-        performance['sensitivity'] = sensitivity if sensitivity is not None else 0
-        performance['specificity'] = specificity if specificity is not None else 0
+        performance['sensitivity'] = sensitivity
+        performance['specificity'] = specificity
+        performance['npv'] = npv
+        performance['precision'] = precision
+        performance['f1'] = f1
 
-        print('\nTestset Accuracy(mean): %0.2f%%' % (100 * acc), end=", ")
-        print('Testset AUC: %0.4f' % auc_)
-        print()
-        print('Confusion Matirx : ')
-        print(CM)
+        print('\nAccuracy: %0.2f%%' % (100 * acc), end=", ")
+        print('AUC: %0.4f' % auc_)
         print('Sensitivity : %0.2f%%' % (sensitivity*100), end=", ")
         print('Specificity : %0.2f%%' % (specificity*100), end=", ")
         print('NPV: %0.2f%%' % (npv*100), end=", ")
         print('Precision: %0.2f%%' % (precision*100), end=", ")
         print('F1 : %0.2f%%' % (f1*100))
+        print()
+        print('Confusion Matirx : ')
+        print(CM)
         print()
 
         for key, value in performance.items():
