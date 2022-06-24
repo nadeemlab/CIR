@@ -11,7 +11,7 @@ pip wandb sklearn sckit-image ipython ninja pandas opencv-python tqdm
 Please refer to the this [link](https://github.com/facebookresearch/pytorch3d/blob/main/INSTALL.md#3-install-wheels-for-linux) for the details of pytorch3d installation.
 
 ## CIRDataset: A large-scale Dataset and benchmark for Clinically-Interpretable lung nodule Radiomics and malignancy prediction [MICCAI'22]
-The first CIR dataset, released [here](https://zenodo.org/record/6672251), contains almost 1000 radiologist QA/QC’ed spiculation/lobulation annotations (computed using our published [LungCancerScreeningRadiomics](https://github.com/taznux/LungCancerScreeningRadiomics) library and QA/QC'ed by a radiologist) on segmented lung nodules for two public datasets, LIDC (with visual radiologist malignancy RM scores for the entire cohort and pathology-proven malignancy PM labels for a subset) and LUNGx (with pathology-proven size-matched benign/malignant nodules to remove the effect of size on malignancy prediction). We also release our multi-class [Voxel2Mesh](https://github.com/cvlab-epfl/voxel2mesh) extension to provide a strong benchmark for end-to-end deep learning lung nodule segmentation, peaks’ classification (lobulation/spiculation), and malignancy prediction; Voxel2Mesh is the only published method to our knowledge that preserves sharp peaks during segmentation and hence its use as our base model. With the release of this comprehensively-annotated dataset, we hope that previous malignancy prediction methods can also validate their explanations/attributions and provide clinically-actionable insights. Users can also generate spiculation/lobulation annotations from scratch for LIDC/LUNGx as well as new datasets using our [LungCancerScreeningRadiomics](https://github.com/taznux/LungCancerScreeningRadiomics) library.
+The first CIR dataset, released [here](https://zenodo.org/record/6672251), contains almost 1000 radiologist QA/QC’ed spiculation/lobulation annotations (computed using our published [LungCancerScreeningRadiomics](https://github.com/taznux/LungCancerScreeningRadiomics) library and QA/QC'ed by a radiologist) on segmented lung nodules for two public datasets, LIDC (with visual radiologist malignancy RM scores for the entire cohort and pathology-proven malignancy PM labels for a subset) and LUNGx (with pathology-proven size-matched benign/malignant nodules to remove the effect of size on malignancy prediction). We also release our multi-class [Voxel2Mesh](https://github.com/cvlab-epfl/voxel2mesh) extension to provide a strong benchmark for end-to-end deep learning lung nodule segmentation, spikes’ classification (lobulation/spiculation), and malignancy prediction; Voxel2Mesh is the only published method to our knowledge that preserves sharp spikes during segmentation and hence its use as our base model. With the release of this comprehensively-annotated dataset, we hope that previous malignancy prediction methods can also validate their explanations/attributions and provide clinically-actionable insights. Users can also generate spiculation/lobulation annotations from scratch for LIDC/LUNGx as well as new datasets using our [LungCancerScreeningRadiomics](https://github.com/taznux/LungCancerScreeningRadiomics) library.
 
 
 ## Usage
@@ -39,12 +39,12 @@ Step 2.1: Convert isotropic voxel data from LungCancerScreeningRadiomics to 64x6
     LIDC-IDRI-0001_CT_1-all.nrrd                - CT Image  
     LIDC-IDRI-0001_CT_1-all-ard.nrrd            - Area Distortion Map  
     LIDC-IDRI-0001_CT_1-all-label.nrrd          - Nodule Segmentation  
-    LIDC-IDRI-0001_CT_1-all-peaks-label.nrrd    - Peak Classification - Spiculation:1, Lobulation: 2, Attachment: 3  
+    LIDC-IDRI-0001_CT_1-all-spikes-label.nrrd    - Spike Classification - Spiculation:1, Lobulation: 2, Attachment: 3  
 - Output: Each case consists of four npy files (numpy) - 64x64x64 cubic image patch
     LIDC-IDRI-0001_iso0.70_s_0_CT.npy           - CT Image  
     LIDC-IDRI-0001_iso0.70_s_0_ard.npy          - Area Distortion Map  
     LIDC-IDRI-0001_iso0.70_s_0_nodule.npy       - Nodule Segmentation  
-    LIDC-IDRI-0001_iso0.70_s_0_peaks.npy        - Peak Classification - Spiculation:1, Lobulation: 2, Attachment: 3  
+    LIDC-IDRI-0001_iso0.70_s_0_spikes.npy        - Spike Classification - Spiculation:1, Lobulation: 2, Attachment: 3  
 
 - Preprocessed data is available [here](https://zenodo.org/record/6672251).
 ```bash

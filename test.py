@@ -100,11 +100,11 @@ def main():
     evaluator_ext = Evaluator(classifier, optimizer,
                               data_ext, trial_path, cfg, data_obj_ext)
 
-    print("LIDC_123vs45")
+    print("\nLIDC_123vs45")
     evaluator.evaluate_all(epoch)
-    # print("LIDC_12vs45")
+    # print("\nLIDC_12vs45")
     # evaluator_wo3.evaluate_all(epoch)
-    print("LUNGx")
+    print("\nLUNGx")
     evaluator_ext.evaluate_all(epoch)
 
 

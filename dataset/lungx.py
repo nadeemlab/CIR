@@ -44,10 +44,10 @@ class LUNGx(LIDC):
                     pids += [pid]
                     x = torch.from_numpy(np.load(sample)[0])
                     inputs += [x]
-                    y = torch.from_numpy(np.load(sample.replace("CT.npy", "peaks.npy"))) # peak segmenation with nodule area
+                    y = torch.from_numpy(np.load(sample.replace("CT.npy", "spikes.npy"))) # spike segmenation with nodule area
                     y1 = torch.from_numpy(np.load(sample.replace("CT.npy", "ard.npy"))[0]) # area distortion map
                     y2 = torch.from_numpy(np.load(sample.replace("CT.npy", "nodule.npy"))[0]) # nodule segmentation
-                    y = (2*(y == 2).type(torch.uint8) + (y == 3).type(torch.uint8)) * (y1 <= 0).type(torch.uint8) # peaks
+                    y = (2*(y == 2).type(torch.uint8) + (y == 3).type(torch.uint8)) * (y1 <= 0).type(torch.uint8) # spikes
                     y = 3*y2 - y.type(torch.uint8) # apply nodule mask
                     
                     #y[y==1] = 5 # nodule

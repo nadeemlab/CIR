@@ -11,7 +11,7 @@ from tqdm import tqdm
 
 #           0             1         2              3               4
 CLASSES = ['background', 'nodule', 'spiculation', 'lobulation']#, 'attachment']
-MODALITIES = ['CT', 'ard', 'nodule', 'peaks']
+MODALITIES = ['CT', 'ard', 'nodule', 'spikes']
 
 
 def crop_img(img_tensor, crop_size, crop):
@@ -129,7 +129,7 @@ def load_list(name):
     return list_file
 
 
-def create_sub_volumes(ct_image, ard_image, label, peak_label, samples, crop_size, filename_prefix, th_percent=0.1):
+def create_sub_volumes(ct_image, ard_image, label, spike_label, samples, crop_size, filename_prefix, th_percent=0.1):
     """
     :param ls: list of modality paths, where the last path is the segmentation map
     :param samples: train/val samples to generate
@@ -143,15 +143,15 @@ def create_sub_volumes(ct_image, ard_image, label, peak_label, samples, crop_siz
     ct_np = sitk.GetArrayFromImage(ct_image).astype("float32")
     ard_np = sitk.GetArrayFromImage(ard_image).astype("float32")
     label_np = sitk.GetArrayFromImage(label)#.astype("uint8")
-    peak_label_np = sitk.GetArrayFromImage(peak_label)#.astype("uint8")
+    spike_label_np = sitk.GetArrayFromImage(spike_label)#.astype("uint8")
 
     images = [
         postproc_medical_image(ct_np, type = 'CT').unsqueeze(0),
         postproc_medical_image(ard_np, type = 'map', crop_size=ct_np.shape).unsqueeze(0), 
         postproc_medical_image(label_np, type = 'label').unsqueeze(0), 
-        postproc_medical_image(peak_label_np, type = 'label', crop_size=ct_np.shape),
+        postproc_medical_image(spike_label_np, type = 'label', crop_size=ct_np.shape),
     ]
-    images[3] += images[2][0] # add nodule region other than peaks and attachements
+    images[3] += images[2][0] # add nodule region other than spikes and attachements
     modalities = len(images)
     list = []
     # print(modalities)
@@ -293,7 +293,7 @@ class NoduleDataset(Dataset):
         # LIDC-IDRI-0001_CT_1-all.nrrd  <- CT image
         # LIDC-IDRI-0001_CT_1-all-ard.nrrd  <- Area Distortion Map
         # LIDC-IDRI-0001_CT_1-all-label.nrrd  <- Nodule Segmentation
-        # LIDC-IDRI-0001_CT_1-all-peaks-label.nrrd  <- Spiculation:1, Lobulation: 2, Attachment: 3
+        # LIDC-IDRI-0001_CT_1-all-spikes-label.nrrd  <- Spiculation:1, Lobulation: 2, Attachment: 3
 
         ard_file = glob.glob(f"{self.root_dir}/{pid}/{pid}_CT_*-ard.nrrd")[0]
         ard_image = sitk.ReadImage(ard_file)
@@ -304,9 +304,9 @@ class NoduleDataset(Dataset):
         iso_voxel_size = ct_spacing.min()
 
         label_file = ard_file.replace("-ard","-label")
-        peak_label_file = ard_file.replace("-ard","-peaks-label")
+        spike_label_file = ard_file.replace("-ard","-spikes-label")
         label = sitk.ReadImage(label_file)
-        peak_label = sitk.ReadImage(peak_label_file)
+        spike_label = sitk.ReadImage(spike_label_file)
 
         filename_prefix = self.sub_vol_path + pid + f"_iso{iso_voxel_size:.2f}_"
 
@@ -314,7 +314,7 @@ class NoduleDataset(Dataset):
         ct_image = image_resample(ct_image, iso_voxel_size=iso_voxel_size)
         ard_image = image_resample(ard_image, iso_voxel_size=iso_voxel_size)
         label = image_resample(label, iso_voxel_size=iso_voxel_size, is_label=True)
-        peak_label = image_resample(peak_label, iso_voxel_size=iso_voxel_size, is_label=True)\
+        spike_label = image_resample(spike_label, iso_voxel_size=iso_voxel_size, is_label=True)\
         
         # crop or pad 
         diff_np = np.asarray(ct_image.GetSize()) - np.asarray(self.crop_size)
@@ -329,9 +329,9 @@ class NoduleDataset(Dataset):
         ct_image = sitk.ConstantPad(ct_image, pad_lower, pad_upper, -2000)
         ard_image = sitk.ConstantPad(ard_image, pad_lower, pad_upper, 0)
         label = sitk.ConstantPad(label, pad_lower, pad_upper, 0)
-        peak_label = sitk.ConstantPad(peak_label, pad_lower, pad_upper, 0)
+        spike_label = sitk.ConstantPad(spike_label, pad_lower, pad_upper, 0)
 
-        self.list += create_sub_volumes(ct_image, ard_image, label, peak_label,
+        self.list += create_sub_volumes(ct_image, ard_image, label, spike_label,
                                         samples=self.samples, crop_size=self.crop_size,
                                         filename_prefix=filename_prefix, th_percent=self.threshold)
 

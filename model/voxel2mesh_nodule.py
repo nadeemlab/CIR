@@ -255,7 +255,7 @@ class Voxel2Mesh(nn.Module):
 
             # keep the same mesh after selection
             if do_unpool[0] == 1:
-                # load mesh information from previous iteration for class 0 peak
+                # load mesh information from previous iteration for class 0 spike
                 faces_prev = pred[0][i][1]
                 _, N_prev, _ = pred[0][i][0].shape 
 

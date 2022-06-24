@@ -13,7 +13,7 @@ from utils.metrics import jaccard_index
 from external.voxel2mesh.utils.utils_common import DataModes
 from external.voxel2mesh.utils.metrics import chamfer_weighted_symmetric
 
-MODALITIES = ['CT', 'ard', 'peaks', 'nodule']
+MODALITIES = ['CT', 'ard', 'spikes', 'nodule']
 
 selected = ['LIDC-IDRI-0072', 'LIDC-IDRI-0090', 'LIDC-IDRI-0138', 'LIDC-IDRI-0149', 'LIDC-IDRI-0162', 'LIDC-IDRI-0163',
             'LIDC-IDRI-0166', 'LIDC-IDRI-0167', 'LIDC-IDRI-0168', 'LIDC-IDRI-0171', 'LIDC-IDRI-0178', 'LIDC-IDRI-0180',
@@ -131,10 +131,10 @@ class LIDC():
                     pids += [pid]
                     x = torch.from_numpy(np.load(sample)[0])
                     inputs += [x]
-                    y = torch.from_numpy(np.load(sample.replace("CT.npy", "peaks.npy"))) # peak segmenation with nodule area
+                    y = torch.from_numpy(np.load(sample.replace("CT.npy", "spikes.npy"))) # spike segmenation with nodule area
                     y1 = torch.from_numpy(np.load(sample.replace("CT.npy", "ard.npy"))[0]) # area distortion map
                     y2 = torch.from_numpy(np.load(sample.replace("CT.npy", "nodule.npy"))[0]) # nodule segmentation
-                    y = (2*(y == 2).type(torch.uint8) + (y == 3).type(torch.uint8)) * (y1 <= 0).type(torch.uint8) # peaks - (spiculation=2 + lobulation=1) in negative ard
+                    y = (2*(y == 2).type(torch.uint8) + (y == 3).type(torch.uint8)) * (y1 <= 0).type(torch.uint8) # spikes - (spiculation=2 + lobulation=1) in negative ard
                     y = 3*y2 - y.type(torch.uint8) # apply nodule mask - 3 nodule, 2 lobulation, 1 spiculation
                     
                     #y[y==1] = 5 # nodule
@@ -162,6 +162,7 @@ class LIDC():
             for j in counts[i]: 
                 pid = pids[j]
                 x = inputs[j]
+                
                 y = labels[j]
 
                 samples.append(Sample(x, y)) 
@@ -208,10 +209,10 @@ class LIDC():
                     pids += [pid]
                     x = torch.from_numpy(np.load(sample)[0])
                     inputs += [x]
-                    y = torch.from_numpy(np.load(sample.replace("0.npy", "seg.npy"))) # peak segmenation with nodule area
+                    y = torch.from_numpy(np.load(sample.replace("0.npy", "seg.npy"))) # spike segmenation with nodule area
                     y1 = torch.from_numpy(np.load(sample.replace("0.npy", "1.npy"))[0]) # area distortion map
                     y2 = torch.from_numpy(np.load(sample.replace("0.npy", "2.npy"))[0]) # nodule segmentation
-                    y = (2*(y == 2).type(torch.uint8) + (y == 3).type(torch.uint8)) * (y1 <= 0).type(torch.uint8) # peaks
+                    y = (2*(y == 2).type(torch.uint8) + (y == 3).type(torch.uint8)) * (y1 <= 0).type(torch.uint8) # spikes
                     y = 3*y2 - y.type(torch.uint8) # apply nodule mask
                     
                     #y[y==1] = 5 # nodule
