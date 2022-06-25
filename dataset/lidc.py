@@ -45,9 +45,10 @@ class SamplePlus:
 
   
 class LIDCDataset():
-    def __init__(self, data, pids, metadata, cfg, mode): 
+    def __init__(self, data, pids, nids, metadata, cfg, mode): 
         self.data = data  
         self.pids = pids
+        self.nids = nids
         self.metadata = metadata
 
         self.cfg = cfg
@@ -63,9 +64,10 @@ class LIDCDataset():
         #print(self.pids[idx])
         item = get_item(item, self.mode, self.cfg) 
         item['pid'] = self.pids[idx].upper()
+        item['nid'] = int(self.nids[idx])
         self.metadata.loc[:, "PID"] = self.metadata.PID.apply(lambda x : x.upper())
 
-        item['metadata'] = self.metadata.query(f"PID=='{item['pid']}'").iloc[0].to_dict()
+        item['metadata'] = self.metadata.query(f"PID=='{item['pid']}'").iloc[item['nid']-1].to_dict()
     
         return item
 
@@ -90,8 +92,8 @@ class LIDC():
         for datamode in [DataModes.TRAINING, DataModes.VALIDATION, DataModes.TESTING]:
             print("LIDC", datamode, 'dataset')
             with open(data_root + '/pre_computed_data_{}_{}.pickle'.format(datamode, "_".join(map(str, down_sample_shape))), 'rb') as handle:
-                new_samples, samples, sample_pids, metadata = pickle.load(handle)
-                data[datamode] = LIDCDataset(new_samples, sample_pids, metadata, cfg, datamode) 
+                new_samples, samples, sample_pids, sample_nids, metadata = pickle.load(handle)
+                data[datamode] = LIDCDataset(new_samples, sample_pids, sample_nids, metadata, cfg, datamode) 
 
         return data
     
@@ -104,8 +106,8 @@ class LIDC():
         for datamode in [DataModes.TRAINING, DataModes.VALIDATION]:
             print("LIDC without class 3", datamode, 'dataset')
             with open(data_root + '/pre_computed_data_{}_{}_wo3.pickle'.format(datamode, "_".join(map(str, down_sample_shape))), 'rb') as handle:
-                new_samples, samples, sample_pids, metadata = pickle.load(handle)
-                data[datamode] = LIDCDataset(new_samples, sample_pids, metadata, cfg, datamode) 
+                new_samples, samples, sample_pids, sample_nids, metadata = pickle.load(handle)
+                data[datamode] = LIDCDataset(new_samples, sample_pids, sample_nids, metadata, cfg, datamode) 
 
         return data
 
@@ -118,6 +120,7 @@ class LIDC():
         samples = glob.glob(f"{data_root}LIDC*s_0*CT.npy")
  
         pids = []
+        nids = []
         inputs = []
         labels = []
 
@@ -126,9 +129,11 @@ class LIDC():
             for sample in pbar:
                 if 'pickle' not in sample:
                     pid = sample.split("/")[-1].split("_")[0]
-                    pbar.set_description("Processing %s" % pid)
+                    nid = sample.split("/")[-1].split("_")[1]
+                    pbar.set_description("Processing %s %s" % (pid, nid))
 
                     pids += [pid]
+                    nids += [nid]
                     x = torch.from_numpy(np.load(sample)[0])
                     inputs += [x]
                     y = torch.from_numpy(np.load(sample.replace("CT.npy", "spikes.npy"))) # spike segmenation with nodule area
@@ -158,15 +163,17 @@ class LIDC():
         for i, datamode in enumerate([DataModes.TRAINING, DataModes.VALIDATION, DataModes.TESTING]):
             samples = []
             sample_pids = []
+            sample_nids = []
  
             for j in counts[i]: 
                 pid = pids[j]
+                nid = nids[j]
                 x = inputs[j]
-                
                 y = labels[j]
 
                 samples.append(Sample(x, y)) 
                 sample_pids.append(pid)
+                sample_nids.append(nid)
 
             if datamode == DataModes.TESTING:
                 metadata_ = metadata.loc[metadata.PID.isin(sample_pids)]
@@ -177,9 +184,9 @@ class LIDC():
             print(metadata_)
             new_samples = sample_to_sample_plus(samples, cfg, datamode)
             with open(data_root + '/pre_computed_data_{}_{}.pickle'.format(datamode, "_".join(map(str, down_sample_shape))), 'wb') as handle:
-                pickle.dump((new_samples, samples, sample_pids, metadata_), handle, protocol=pickle.HIGHEST_PROTOCOL)
+                pickle.dump((new_samples, samples, sample_pids, sample_nids, metadata_), handle, protocol=pickle.HIGHEST_PROTOCOL)
 
-            data[datamode] = LIDCDataset(samples, sample_pids, metadata_, cfg, datamode)
+            data[datamode] = LIDCDataset(samples, sample_pids, sample_nids, metadata_, cfg, datamode)
         
         print('Pre-processing complete') 
         return data
@@ -196,6 +203,7 @@ class LIDC():
         samples = [sample for sample in samples if sample.split("/")[-1].split("_")[0] in metadata.PID.values]
         
         pids = []
+        nids = []
         inputs = []
         labels = []
 
@@ -204,9 +212,11 @@ class LIDC():
             for sample in pbar:
                 if 'pickle' not in sample:
                     pid = sample.split("/")[-1].split("_")[0]
-                    pbar.set_description("Processing %s" % pid)
+                    nid = sample.split("/")[-1].split("_")[1]
+                    pbar.set_description("Processing %s %s" % (pid, nid))
 
                     pids += [pid]
+                    nids += [nid]
                     x = torch.from_numpy(np.load(sample)[0])
                     inputs += [x]
                     y = torch.from_numpy(np.load(sample.replace("0.npy", "seg.npy"))) # spike segmenation with nodule area
@@ -227,7 +237,7 @@ class LIDC():
         train_val_idx = [x for x in range(len(pids)) if pids[x] not in selected]
         test_idx = [x for x in range(len(pids)) if pids[x] in selected]
         perm = np.random.permutation(train_val_idx) 
-        counts = [perm[:len(train_val_idx)//2], perm[len(train_val_idx)//2:], test_idx]
+        counts = [perm[:len(train_val_idx)//10*8], perm[len(train_val_idx)//10*8:], test_idx]
  
         data = {}
         down_sample_shape = cfg.patch_shape
@@ -236,14 +246,17 @@ class LIDC():
         for i, datamode in enumerate([DataModes.TRAINING, DataModes.VALIDATION, DataModes.TESTING]):
             samples = []
             sample_pids = []
+            sample_nids = []
  
             for j in counts[i]: 
                 pid = pids[j]
+                nid = nids[j]
                 x = inputs[j]
                 y = labels[j]
 
                 samples.append(Sample(x, y)) 
                 sample_pids.append(pid)
+                sample_nids.append(nid)
 
             if datamode == DataModes.TESTING:
                 metadata_ = metadata.loc[metadata.PID.isin(sample_pids)]
@@ -252,11 +265,11 @@ class LIDC():
             else:
                 metadata_ = metadata.loc[metadata.PID.isin(sample_pids)]
             print(metadata_)
-
+            new_samples = sample_to_sample_plus(samples, cfg, datamode)
             with open(data_root + '/pre_computed_data_{}_{}_wo3.pickle'.format(datamode, "_".join(map(str, down_sample_shape))), 'wb') as handle:
-                pickle.dump((samples, sample_pids, metadata_), handle, protocol=pickle.HIGHEST_PROTOCOL)
+                pickle.dump((new_samples, samples, sample_pids, sample_nids, metadata_), handle, protocol=pickle.HIGHEST_PROTOCOL)
 
-            data[datamode] = LIDCDataset(samples, sample_pids, metadata_, cfg, datamode)
+            data[datamode] = LIDCDataset(samples, sample_pids, sample_nids, metadata_, cfg, datamode)
         
         print('Pre-processing complete') 
         return data

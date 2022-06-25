@@ -197,12 +197,12 @@ def clean_border_pixels(image, gap):
 
     D, H, W = image.shape
     y_ = image.clone()
-    y_[:gap] = 0;
-    y_[:, :gap] = 0;
-    y_[:, :, :gap] = 0;
-    y_[D - gap:] = 0;
-    y_[:, H - gap] = 0;
-    y_[:, :, W - gap] = 0;
+    y_[:gap] = 0
+    y_[:, :gap] = 0
+    y_[:, :, :gap] = 0
+    y_[D - gap:] = 0
+    y_[:, H - gap] = 0
+    y_[:, :, W - gap] = 0
 
     return y_
 

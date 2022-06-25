@@ -295,45 +295,48 @@ class NoduleDataset(Dataset):
         # LIDC-IDRI-0001_CT_1-all-label.nrrd  <- Nodule Segmentation
         # LIDC-IDRI-0001_CT_1-all-spikes-label.nrrd  <- Spiculation:1, Lobulation: 2, Attachment: 3
 
-        ard_file = glob.glob(f"{self.root_dir}/{pid}/{pid}_CT_*-ard.nrrd")[0]
-        ard_image = sitk.ReadImage(ard_file)
+        ard_files = glob.glob(f"{self.root_dir}/{pid}/{pid}_CT_*-ard.nrrd")
+        nid = 1
+        for ard_file in ard_files:
+            ard_image = sitk.ReadImage(ard_file)
 
-        ct_file = ard_file.replace("-ard","")
-        ct_image = sitk.ReadImage(ct_file)
-        ct_spacing = np.asarray(ct_image.GetSpacing())
-        iso_voxel_size = ct_spacing.min()
+            ct_file = ard_file.replace("-ard","")
+            ct_image = sitk.ReadImage(ct_file)
+            ct_spacing = np.asarray(ct_image.GetSpacing())
+            iso_voxel_size = ct_spacing.min()
 
-        label_file = ard_file.replace("-ard","-label")
-        spike_label_file = ard_file.replace("-ard","-spikes-label")
-        label = sitk.ReadImage(label_file)
-        spike_label = sitk.ReadImage(spike_label_file)
+            label_file = ard_file.replace("-ard","-label")
+            spike_label_file = ard_file.replace("-ard","-spikes-label")
+            label = sitk.ReadImage(label_file)
+            spike_label = sitk.ReadImage(spike_label_file)
 
-        filename_prefix = self.sub_vol_path + pid + f"_iso{iso_voxel_size:.2f}_"
+            filename_prefix = f"{self.sub_vol_path}{pid}_{str(nid)}_iso{iso_voxel_size:.2f}_"
 
-        # resample to be isotropic voxel
-        ct_image = image_resample(ct_image, iso_voxel_size=iso_voxel_size)
-        ard_image = image_resample(ard_image, iso_voxel_size=iso_voxel_size)
-        label = image_resample(label, iso_voxel_size=iso_voxel_size, is_label=True)
-        spike_label = image_resample(spike_label, iso_voxel_size=iso_voxel_size, is_label=True)\
-        
-        # crop or pad 
-        diff_np = np.asarray(ct_image.GetSize()) - np.asarray(self.crop_size)
-        #print(pid, ct_image.GetSize(), diff_np)
-        diff_lower = np.ceil(diff_np/2).astype(int)
-        diff_upper = np.floor(diff_np/2).astype(int)
-        pad_lower = (-diff_lower*(diff_np<0)).tolist()
-        pad_upper = (-diff_upper*(diff_np<0)).tolist()
-        pad_lower[2] += int(self.crop_size[2]/2)
-        pad_upper[2] += int(self.crop_size[2]/2)
-        
-        ct_image = sitk.ConstantPad(ct_image, pad_lower, pad_upper, -2000)
-        ard_image = sitk.ConstantPad(ard_image, pad_lower, pad_upper, 0)
-        label = sitk.ConstantPad(label, pad_lower, pad_upper, 0)
-        spike_label = sitk.ConstantPad(spike_label, pad_lower, pad_upper, 0)
+            # resample to be isotropic voxel
+            ct_image = image_resample(ct_image, iso_voxel_size=iso_voxel_size)
+            ard_image = image_resample(ard_image, iso_voxel_size=iso_voxel_size)
+            label = image_resample(label, iso_voxel_size=iso_voxel_size, is_label=True)
+            spike_label = image_resample(spike_label, iso_voxel_size=iso_voxel_size, is_label=True)\
+            
+            # crop or pad 
+            diff_np = np.asarray(ct_image.GetSize()) - np.asarray(self.crop_size)
+            #print(pid, ct_image.GetSize(), diff_np)
+            diff_lower = np.ceil(diff_np/2).astype(int)
+            diff_upper = np.floor(diff_np/2).astype(int)
+            pad_lower = (-diff_lower*(diff_np<0)).tolist()
+            pad_upper = (-diff_upper*(diff_np<0)).tolist()
+            pad_lower[2] += int(self.crop_size[2]/2)
+            pad_upper[2] += int(self.crop_size[2]/2)
+            
+            ct_image = sitk.ConstantPad(ct_image, pad_lower, pad_upper, -2000)
+            ard_image = sitk.ConstantPad(ard_image, pad_lower, pad_upper, 0)
+            label = sitk.ConstantPad(label, pad_lower, pad_upper, 0)
+            spike_label = sitk.ConstantPad(spike_label, pad_lower, pad_upper, 0)
 
-        self.list += create_sub_volumes(ct_image, ard_image, label, spike_label,
-                                        samples=self.samples, crop_size=self.crop_size,
-                                        filename_prefix=filename_prefix, th_percent=self.threshold)
+            self.list += create_sub_volumes(ct_image, ard_image, label, spike_label,
+                                            samples=self.samples, crop_size=self.crop_size,
+                                            filename_prefix=filename_prefix, th_percent=self.threshold)
+            nid += 1
 
     def create_input_data(self):
         make_dirs(self.sub_vol_path)

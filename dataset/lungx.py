@@ -20,8 +20,8 @@ class LUNGx(LIDC):
         for datamode in [DataModes.TRAINING, DataModes.TESTING]:
             print("LUNGx", datamode, 'dataset')
             with open(data_root + '/pre_computed_data_{}_{}.pickle'.format(datamode, "_".join(map(str, down_sample_shape))), 'rb') as handle:
-                new_samples, samples, sample_pids, metadata = pickle.load(handle)
-                data[datamode] = LIDCDataset(new_samples, sample_pids, metadata, cfg, datamode) 
+                new_samples, samples, sample_pids, sample_nids, metadata = pickle.load(handle)
+                data[datamode] = LIDCDataset(new_samples, sample_pids, sample_nids, metadata, cfg, datamode) 
 
         return data
 
@@ -31,6 +31,7 @@ class LUNGx(LIDC):
         samples_test = glob.glob(f"{data_root}LUNGx*s_0*CT.npy")
  
         pids = []
+        nids = []
         inputs = []
         labels = []
 
@@ -39,9 +40,11 @@ class LUNGx(LIDC):
             for sample in pbar:
                 if 'pickle' not in sample:
                     pid = sample.split("/")[-1].split("_")[0]
-                    pbar.set_description("Processing %s" % pid)
+                    nid = sample.split("/")[-1].split("_")[1]
+                    pbar.set_description("Processing %s %s" % (pid, nid))
                     
                     pids += [pid]
+                    nids += [nid]
                     x = torch.from_numpy(np.load(sample)[0])
                     inputs += [x]
                     y = torch.from_numpy(np.load(sample.replace("CT.npy", "spikes.npy"))) # spike segmenation with nodule area
@@ -69,14 +72,17 @@ class LUNGx(LIDC):
         for i, datamode in enumerate([DataModes.TRAINING, DataModes.TESTING]):
             samples = []
             sample_pids = []
+            sample_nids = []
  
             for j in counts[i]: 
                 pid = pids[j]
+                nid = nids[j]
                 x = inputs[j]
                 y = labels[j]
 
                 samples.append(Sample(x, y)) 
                 sample_pids.append(pid)
+                sample_nids.append(nid)
 
             metadata = pd.read_csv(data_root + "../LUNGx.csv")
             if datamode == DataModes.TRAINING:
@@ -87,8 +93,9 @@ class LUNGx(LIDC):
             print(metadata)
             new_samples = sample_to_sample_plus(samples, cfg, datamode)
             with open(data_root + '/pre_computed_data_{}_{}.pickle'.format(datamode, "_".join(map(str, down_sample_shape))), 'wb') as handle:
-                pickle.dump((new_samples, samples, sample_pids, metadata), handle, protocol=pickle.HIGHEST_PROTOCOL)
-            data[datamode] = LIDCDataset(samples, sample_pids, metadata, cfg, datamode)
+                pickle.dump((new_samples, samples, sample_pids, sample_nids, metadata), handle, protocol=pickle.HIGHEST_PROTOCOL)
+
+            data[datamode] = LIDCDataset(samples, sample_pids, sample_nids, metadata, cfg, datamode)
         
         print('Pre-processing complete') 
         return data
