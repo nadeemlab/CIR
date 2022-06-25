@@ -35,12 +35,12 @@ Step 2.0: Generate nrrd files using LungCancerScreeningRadiomics
 ```
 
 Step 2.1: Convert isotropic voxel data from LungCancerScreeningRadiomics to 64x64x64 cubic image patch for 3D CNN models (dataset/NoduleDataset.py)
-- Input: Each case consists of four nrrd files (SimpleITK)
+- Input: Each case consists of four nrrd files (SimpleITK)  
     LIDC-IDRI-0001_CT_1-all.nrrd                - CT Image  
     LIDC-IDRI-0001_CT_1-all-ard.nrrd            - Area Distortion Map  
     LIDC-IDRI-0001_CT_1-all-label.nrrd          - Nodule Segmentation  
     LIDC-IDRI-0001_CT_1-all-spikes-label.nrrd    - Spike Classification - Spiculation:1, Lobulation: 2, Attachment: 3  
-- Output: Each case consists of four npy files (numpy) - 64x64x64 cubic image patch
+- Output: Each case consists of four npy files (numpy) - 64x64x64 cubic image patch  
     LIDC-IDRI-0001_iso0.70_s_0_CT.npy           - CT Image  
     LIDC-IDRI-0001_iso0.70_s_0_ard.npy          - Area Distortion Map  
     LIDC-IDRI-0001_iso0.70_s_0_nodule.npy       - Nodule Segmentation  
@@ -52,11 +52,11 @@ Step 2.1: Convert isotropic voxel data from LungCancerScreeningRadiomics to 64x6
 ```
   
 Step 2.2: Divide datasets into subsets (Training, Validation, Testing), extract surface voxels, and combine voxel data and outcome data (dataset/lidc.py & dataset/lungx.py)
-- Input: Output from the previous step and outcome data
+- Input: Output from the previous step and outcome data  
   LIDC.csv - Raiological malignancy (RM) only  
   LIDC72.csv - RM and pathoogical malignancy (PM)  
   LUNGx.csv - PM only  
-- Output: pickle files for each subset
+- Output: pickle files for each subset  
   pre_computed_data_trainig_64_64_64.pickle  
   pre_computed_data_validation_64_64_64.pickle (LUNGx does not have this)  
   pre_computed_data_testing_64_64_64.pickle  
