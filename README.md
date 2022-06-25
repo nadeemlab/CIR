@@ -10,7 +10,7 @@ pip wandb sklearn sckit-image ipython ninja pandas opencv-python tqdm
 ```
 Please refer to the this [link](https://github.com/facebookresearch/pytorch3d/blob/main/INSTALL.md#3-install-wheels-for-linux) for the details of pytorch3d installation.
 
-## CIRDataset: A large-scale Dataset and benchmark for Clinically-Interpretable lung nodule Radiomics and malignancy prediction [MICCAI'22]
+## CIRDataset: A large-scale Dataset for Clinically-Interpretable lung nodule Radiomics and malignancy prediction [MICCAI'22]
 The first CIR dataset, released [here](https://zenodo.org/record/6672251), contains almost 1000 radiologist QA/QC’ed spiculation/lobulation annotations (computed using our published [LungCancerScreeningRadiomics](https://github.com/taznux/LungCancerScreeningRadiomics) library and QA/QC'ed by a radiologist) on segmented lung nodules for two public datasets, LIDC (with visual radiologist malignancy RM scores for the entire cohort and pathology-proven malignancy PM labels for a subset) and LUNGx (with pathology-proven size-matched benign/malignant nodules to remove the effect of size on malignancy prediction). We also release our multi-class [Voxel2Mesh](https://github.com/cvlab-epfl/voxel2mesh) extension to provide a strong benchmark for end-to-end deep learning lung nodule segmentation, spikes’ classification (lobulation/spiculation), and malignancy prediction; Voxel2Mesh is the only published method to our knowledge that preserves sharp spikes during segmentation and hence its use as our base model. With the release of this comprehensively-annotated dataset, we hope that previous malignancy prediction methods can also validate their explanations/attributions and provide clinically-actionable insights. Users can also generate spiculation/lobulation annotations from scratch for LIDC/LUNGx as well as new datasets using our [LungCancerScreeningRadiomics](https://github.com/taznux/LungCancerScreeningRadiomics) library.
 
 
@@ -73,7 +73,7 @@ Step 2.2: Divide datasets into subsets (Training, Validation, Testing), extract 
 If you find our work useful in your research or if you use parts of this code, please cite our paper:
 ```
 @article{choi2022cirdataset,
-  title={CIRDataset: A large-scale Dataset and benchmark for Clinically-Interpretable lung nodule Radiomics and malignancy prediction},
+  title={CIRDataset: A large-scale Dataset for Clinically-Interpretable lung nodule Radiomics and malignancy prediction},
   author={Choi, Wookjin and Dahiya, Navdeep and Nadeem, Saad},
   journal={International Conference on Medical Image Computing and Computer-Assisted Intervention (MICCAI)},
   year={2022},
