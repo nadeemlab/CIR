@@ -31,7 +31,7 @@ Please refer to the this [link](https://github.com/facebookresearch/pytorch3d/bl
 ```bash
 git clone --recursive git@github.com:nadeemlab/CIR.git
 ```
-Step 1: Update config.py. You may need to set the path to the dataset and also the directory to save the results.
+Step 1: Update config.py. You may need to set the path to the dataset and also the directory to save the results. All ready to train/test data is available [here](https://zenodo.org/record/6672251).
 
 Step 2: You have to first perform data pre-processing. `python data_preprocess.py`
 
@@ -40,7 +40,7 @@ Step 3: Now execute `python main.py` and this will start training the network.
 Step 4: Test the trained model. `python test.py`
 
 ### Data preprocessing
-Pre-processed data will be save at the dataset directory.
+Pre-processed data will be saved at the dataset directory.
 
 Step 2.0: Generate nrrd files using LungCancerScreeningRadiomics
 - Lung nodule spiculation data can be generated from the scratch using [LungCancerScreeninigRadiomics](https://github.com/taznux/LungCancerScreeningRadiomics) for LIDC-IDRI and LUNGx dataset.  
@@ -81,6 +81,10 @@ Step 2.2: Divide datasets into subsets (Training, Validation, Testing), extract 
 ```bash
    tar xjvf CIRDataset_pickle_for_voxel2mesh.tar.bz2
 ```
+
+### Running Pre-trained Models
+- Coming Soon
+- Docker containers Coming Soon
 
 ## Acknowledgments
 * This code is inspired by [Voxel2Mesh](https://github.com/cvlab-epfl/voxel2mesh).
