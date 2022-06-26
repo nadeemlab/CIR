@@ -17,14 +17,20 @@ We also release our multi-class [Voxel2Mesh](https://github.com/cvlab-epfl/voxel
 ![architecure_image](./images/IRT_architecture.png)*Depiction of IRT architecture based on Voxel2Mesh. The standard UNet based voxel encoder/decoder (top) extracts features from the input CT volumes while the mesh decoder deforms an initial spherical mesh into increasing finer resolution meshes matching the target shape. The mesh deformation utilizes feature vectors sampled from the voxel decoder through the Learned Neighborhood (LN) Sampling technique and also performs adaptive unpooling with increased vertex counts in high curvature areas. We extend the architecture by introducing extra mesh decoder layers for spiculation and lobulation classification. We also sample vertices (shape features) from the final mesh unpooling layer as input to Fully Connected malignancy prediction network. We optionally add deep voxel-features from the last voxel encoder layer to the malignancy prediction network.*
 
 ## Installation
+It is highly recommended to install dependencies in either a python virtual environment or anaconda environment. Instructions for python virtual environment:
 ```bash
-pip install torch torchvision torchaudio --extra-index-url https://download.pytorch.org/whl/cu113
-pip install --no-index --no-cache-dir pytorch3d -f https://dl.fbaipublicfiles.com/pytorch3d/packaging/wheels/py38_cu113_pyt1110/download.html
-pip wandb sklearn sckit-image ipython ninja pandas opencv-python tqdm
+python3 -m venv venv
+source venv/bin/activate
+(venv) pip install torch torchvision torchaudio --extra-index-url https://download.pytorch.org/whl/cu113
+(venv) pip install --no-index --no-cache-dir pytorch3d -f https://dl.fbaipublicfiles.com/pytorch3d/packaging/wheels/py38_cu113_pyt1110/download.html
+(venv) pip install wandb sklearn scikit-image ipython ninja pandas opencv-python tqdm
 ```
 Please refer to the this [link](https://github.com/facebookresearch/pytorch3d/blob/main/INSTALL.md#3-install-wheels-for-linux) for the details of pytorch3d installation.
 
 ## Usage
+```bash
+git clone --recursive git@github.com:nadeemlab/CIR.git
+```
 Step 1: Update config.py. You may need to set the path to the dataset and also the directory to save the results.
 
 Step 2: You have to first perform data pre-processing. `python data_preprocess.py`
