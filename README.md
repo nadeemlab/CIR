@@ -31,6 +31,8 @@ Please refer to the this [link](https://github.com/facebookresearch/pytorch3d/bl
 ```bash
 git clone --recursive git@github.com:nadeemlab/CIR.git
 ```
+High level usage instructions are detailed below. Detailed instructions at each step, including running pre-trained models, are described in following subsections.
+
 Step 1: Update config.py. You may need to set the path to the dataset and also the directory to save the results. All ready to train/test data is available [here](https://zenodo.org/record/6672251).
 
 Step 2: You have to first perform data pre-processing. `python data_preprocess.py`
