@@ -47,7 +47,7 @@ Pre-processed data will be saved at the dataset directory.
 Step 2.0: Generate nrrd files using LungCancerScreeningRadiomics
 - Lung nodule spiculation data can be generated from the scratch using [LungCancerScreeninigRadiomics](https://github.com/taznux/LungCancerScreeningRadiomics) for LIDC-IDRI and LUNGx dataset.  
 
-- Preprocessed data is available [here](https://zenodo.org/record/6672251).
+- Preprocessed data is available [here](https://zenodo.org/record/6762573).
 ```bash
    tar xjvf CIRDataset_LCSR.tar.bz2
 ```
@@ -64,7 +64,7 @@ Step 2.1: Convert isotropic voxel data from LungCancerScreeningRadiomics to 64x6
     LIDC-IDRI-0001_iso0.70_s_0_nodule.npy       - Nodule Segmentation  
     LIDC-IDRI-0001_iso0.70_s_0_spikes.npy        - Spike Classification - Spiculation:1, Lobulation: 2, Attachment: 3  
 
-- Preprocessed data is available [here](https://zenodo.org/record/6672251).
+- Preprocessed data is available [here](https://zenodo.org/record/6762573).
 ```bash
    tar xjvf CIRDataset_npy_for_cnn.tar.bz2
 ```
@@ -79,18 +79,18 @@ Step 2.2: Divide datasets into subsets (Training, Validation, Testing), extract 
   pre_computed_data_validation_64_64_64.pickle (LUNGx does not have this)  
   pre_computed_data_testing_64_64_64.pickle  
 
-- Preprocessed data is available [here](https://zenodo.org/record/6672251).
+- Preprocessed data is available [here](https://zenodo.org/record/6762573).
 ```bash
    tar xjvf CIRDataset_pickle_for_voxel2mesh.tar.bz2
 ```
 
 ### Running Pre-trained Models
-1. Mesh Only model https://mskcc.box.com/s/k46wrcdokm52zyvibwmlu6b8iy7t7xlu
+1. Mesh Only model is available [here](https://zenodo.org/record/6762573)
 ```bash
     tar xjvf pretrained_model-meshonly.tar.bz2
     python test.py --model_path experiments/MICCAI2022/Experiment_001/trial_1
 ```
-2. Mesh+Encoder model https://mskcc.box.com/s/j4kacjt5jlgtgo5jcu21y970i8y0m0l2
+2. Mesh+Encoder model is available [here](https://zenodo.org/record/6762573)
 ```bash
     tar xjvf pretrained_model-mesh+encoder.tar.bz2
     python test.py --model_path experiments/MICCAI2022/Experiment_002/trial_1
