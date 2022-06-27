@@ -40,14 +40,14 @@ class Evaluator(object):
         if self.config.wab:
             log_vals = {"epoch": epoch}
             for key, value in performences[split].items():
-                log_vals[split + '_' + key + '/mean'] = np.nanmean(performences[split][key])
+                log_vals[key + '/mean'] = np.nanmean(performences[split][key])
                 try:
                     for i in range(1, num_classes):
-                        log_vals[split + '_' + key + '/class_' + str(i)] = np.nanmean(performences[split][key][:, i - 1])
+                        log_vals[key + '/class_' + str(i)] = np.nanmean(performences[split][key][:, i - 1])
                 except: # measures without classes
                     pass
             try:
-                wandb.log(log_vals)
+                wandb.log({self.data[split].name:{split:log_vals}})
             except Exception as ex:
                 print(ex)
 
@@ -98,8 +98,11 @@ class Evaluator(object):
                 self.write_to_wandb(
                     epoch, split, performences, self.config.num_classes)
                 if split == DataModes.TESTING:
-                    self.data[split].metadata.Malignancy = self.data[split].metadata.Malignancy_weak
+                    split = "testing_RM"
+                    self.data[split] = self.data[DataModes.TESTING]
+                    self.data[split].metadata.Malignancy = self.data[DataModes.TESTING].metadata.Malignancy_weak
                     print("\n LIDC 72 RM")
+                    
                     dataloader = DataLoader(
                         self.data[split], batch_size=1, shuffle=False)
                     performences[split], predictions[split] = self.evaluate_set(
@@ -199,6 +202,7 @@ class Evaluator(object):
                     performance[key].append(result[key])
                     
                 #teval.set_postfix(**performance)
+                
 
         labels = np.asarray(labels)
         preds = np.asarray(preds)

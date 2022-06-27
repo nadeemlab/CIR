@@ -50,7 +50,7 @@ class Trainer(object):
                             log_vals[key] = value / print_every
                         log_vals['iteration'] = iteration
                         if self.config.wab:
-                            wandb.log(log_vals)
+                            wandb.log({self.evaluator.data["training"].name:{"training":log_vals}})
                         tepoch.set_postfix(loss=log_vals['loss'].cpu().numpy())
                         log_vals = {}
                     else:

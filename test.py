@@ -70,8 +70,8 @@ def main():
     save_path = trial_path + '/best_performance/model.pth'
     checkpoint = torch.load(save_path)
     epoch = checkpoint['epoch']
-    wandb.init(name='Experiment_{}/trial_{}/epoch_{}_test'.format(cfg.experiment_idx,
-               trial_id, epoch), project="vm-net", dir=trial_path)
+    wandb.init(name='Experiment_{}/trial_{}/epoch_{}'.format(cfg.experiment_idx,
+               trial_id, epoch), project="CIR_test", dir=trial_path)
     
     try:
         classifier.load_state_dict(checkpoint['model_state_dict'])

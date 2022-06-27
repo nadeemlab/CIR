@@ -56,7 +56,7 @@ def main():
 
     if cfg.wab:
         wandb.init(name='Experiment_{}/trial_{}'.format(cfg.experiment_idx,
-                   trial_id), project="vm-net", dir=trial_path)
+                   trial_id), project="CIR", dir=trial_path)
 
     print("Initialize optimizer")
     optimizer = optim.Adam(filter(lambda p: p.requires_grad, classifier.parameters(

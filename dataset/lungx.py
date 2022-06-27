@@ -21,7 +21,7 @@ class LUNGx(LIDC):
             print("LUNGx", datamode, 'dataset')
             with open(data_root + '/pre_computed_data_{}_{}.pickle'.format(datamode, "_".join(map(str, down_sample_shape))), 'rb') as handle:
                 new_samples, samples, sample_pids, sample_nids, metadata = pickle.load(handle)
-                data[datamode] = LIDCDataset(new_samples, sample_pids, sample_nids, metadata, cfg, datamode) 
+                data[datamode] = LIDCDataset(new_samples, sample_pids, sample_nids, metadata, cfg, datamode, "LUNGx") 
 
         return data
 
@@ -95,7 +95,7 @@ class LUNGx(LIDC):
             with open(data_root + '/pre_computed_data_{}_{}.pickle'.format(datamode, "_".join(map(str, down_sample_shape))), 'wb') as handle:
                 pickle.dump((new_samples, samples, sample_pids, sample_nids, metadata), handle, protocol=pickle.HIGHEST_PROTOCOL)
 
-            data[datamode] = LIDCDataset(samples, sample_pids, sample_nids, metadata, cfg, datamode)
+            data[datamode] = LIDCDataset(samples, sample_pids, sample_nids, metadata, cfg, datamode, "LUNGx")
         
         print('Pre-processing complete') 
         return data

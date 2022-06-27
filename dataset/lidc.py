@@ -45,7 +45,7 @@ class SamplePlus:
 
   
 class LIDCDataset():
-    def __init__(self, data, pids, nids, metadata, cfg, mode): 
+    def __init__(self, data, pids, nids, metadata, cfg, mode, name="LIDC"): 
         self.data = data  
         self.pids = pids
         self.nids = nids
@@ -53,6 +53,7 @@ class LIDCDataset():
 
         self.cfg = cfg
         self.mode = mode
+        self.name = name
  
 
     def __len__(self):
@@ -93,7 +94,7 @@ class LIDC():
             print("LIDC", datamode, 'dataset')
             with open(data_root + '/pre_computed_data_{}_{}.pickle'.format(datamode, "_".join(map(str, down_sample_shape))), 'rb') as handle:
                 new_samples, samples, sample_pids, sample_nids, metadata = pickle.load(handle)
-                data[datamode] = LIDCDataset(new_samples, sample_pids, sample_nids, metadata, cfg, datamode) 
+                data[datamode] = LIDCDataset(new_samples, sample_pids, sample_nids, metadata, cfg, datamode, "LIDC") 
 
         return data
     
@@ -107,7 +108,7 @@ class LIDC():
             print("LIDC without class 3", datamode, 'dataset')
             with open(data_root + '/pre_computed_data_{}_{}_wo3.pickle'.format(datamode, "_".join(map(str, down_sample_shape))), 'rb') as handle:
                 new_samples, samples, sample_pids, sample_nids, metadata = pickle.load(handle)
-                data[datamode] = LIDCDataset(new_samples, sample_pids, sample_nids, metadata, cfg, datamode) 
+                data[datamode] = LIDCDataset(new_samples, sample_pids, sample_nids, metadata, cfg, datamode, "LIDC_12vs45") 
 
         return data
 
@@ -186,7 +187,7 @@ class LIDC():
             with open(data_root + '/pre_computed_data_{}_{}.pickle'.format(datamode, "_".join(map(str, down_sample_shape))), 'wb') as handle:
                 pickle.dump((new_samples, samples, sample_pids, sample_nids, metadata_), handle, protocol=pickle.HIGHEST_PROTOCOL)
 
-            data[datamode] = LIDCDataset(samples, sample_pids, sample_nids, metadata_, cfg, datamode)
+            data[datamode] = LIDCDataset(samples, sample_pids, sample_nids, metadata_, cfg, datamode, "LIDC")
         
         print('Pre-processing complete') 
         return data
