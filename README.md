@@ -85,7 +85,17 @@ Step 2.2: Divide datasets into subsets (Training, Validation, Testing), extract 
 ```
 
 ### Running Pre-trained Models
-- Coming Soon
+1. Mesh Only model https://mskcc.box.com/s/k46wrcdokm52zyvibwmlu6b8iy7t7xlu
+```bash
+    tar xjvf pretrained_model-meshonly.tar.bz2
+    python test.py --model_path experiments/MICCAI2022/Experiment_001/trial_1
+```
+2. Mesh+Encoder model https://mskcc.box.com/s/j4kacjt5jlgtgo5jcu21y970i8y0m0l2
+```bash
+    tar xjvf pretrained_model-mesh+encoder.tar.bz2
+    python test.py --model_path experiments/MICCAI2022/Experiment_002/trial_1
+```
+
 - Docker containers Coming Soon
 
 ## Acknowledgments
