@@ -36,6 +36,8 @@ class Trainer(object):
         self.net = self.net.train()
         print_every = 10
         log_vals = {}
+        dataset_name = self.evaluator.data["training"].name
+        prefix = dataset_name + '/' + "training" + '/'
         for epoch in range(start_epoch, 10000):  # loop over the dataset multiple times
             with tqdm(self.trainloader, unit="sample") as tepoch:
                 for itr, data in enumerate(tepoch):
@@ -50,15 +52,15 @@ class Trainer(object):
                             log_vals[key] = value / print_every
                         log_vals['iteration'] = iteration
                         if self.config.wab:
-                            wandb.log({self.evaluator.data["training"].name:{"training":log_vals}})
-                        tepoch.set_postfix(loss=log_vals['loss'].cpu().numpy())
+                            wandb.log(log_vals)
+                        tepoch.set_postfix(loss=log_vals[prefix + 'loss'].cpu().numpy())
                         log_vals = {}
                     else:
                         for key, value in loss.items():
                             try:
-                                log_vals[key] += value
+                                log_vals[prefix + key] += value
                             except:
-                                log_vals[key] = value
+                                log_vals[prefix + key] = value
 
                 self.evaluator.evaluate(epoch)
                 self.net = self.net.train()
@@ -67,3 +69,4 @@ class Trainer(object):
                     break
 
         logger.info("... end training!")
+        wandb.finish()

@@ -106,6 +106,8 @@ def main():
     # evaluator_wo3.evaluate_all(epoch)
     print("\nLUNGx")
     evaluator_ext.evaluate_all(epoch)
+    
+    wandb.finish()
 
 
 if __name__ == "__main__":

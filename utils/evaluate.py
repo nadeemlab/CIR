@@ -39,15 +39,17 @@ class Evaluator(object):
     def write_to_wandb(self, epoch, split, performences, num_classes):
         if self.config.wab:
             log_vals = {"epoch": epoch}
+            dataset_name = self.data[split].name
+            prefix = dataset_name + '/' + split + '/'
             for key, value in performences[split].items():
-                log_vals[key + '/mean'] = np.nanmean(performences[split][key])
+                log_vals[prefix + key + '/mean'] = np.nanmean(value)
                 try:
                     for i in range(1, num_classes):
-                        log_vals[key + '/class_' + str(i)] = np.nanmean(performences[split][key][:, i - 1])
+                        log_vals[prefix + key + '/class_' + str(i)] = np.nanmean(value[:, i - 1])
                 except: # measures without classes
                     pass
             try:
-                wandb.log({self.data[split].name:{split:log_vals}})
+                wandb.log(log_vals)
             except Exception as ex:
                 print(ex)
 
@@ -202,7 +204,6 @@ class Evaluator(object):
                     performance[key].append(result[key])
                     
                 #teval.set_postfix(**performance)
-                
 
         labels = np.asarray(labels)
         preds = np.asarray(preds)
