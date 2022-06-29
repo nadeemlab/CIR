@@ -134,7 +134,7 @@ docker build -f Dockerfile_CIR -t cir_docker .
 ```
 docker run --gpus all -it cir_docker /bin/bash
 ```
-* Pre-built docker image including data and pre-trained models is available [here](https://hub.docker.com/repository/docker/choilab/cir_docker/)
+* Pre-built docker image including data and pre-trained models is available [here](https://hub.docker.com/r/choilab/cir_docker)
 ```
 docker run --gpus all -it choilab/cir_docker /bin/bash
 ```
