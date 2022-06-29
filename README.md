@@ -63,7 +63,7 @@ Step 3: Now execute `python main.py` and this will start training the network.
 
 Step 4: Test the trained model. `python test.py`
 
-### Data preprocessing
+### Data Pre-processing
 Pre-processed data will be saved at the dataset directory.
 
 Step 2.0: Generate nrrd files using LungCancerScreeningRadiomics
@@ -130,7 +130,7 @@ First, you need to install the [Docker Engine](https://docs.docker.com/engine/in
 docker build -f Dockerfile_CIR -t cir_docker .
 ```
 * Note: You may need to modify lines 1 and 9 of Dockerfile_CIR to match your systems' cuda version.
-5. Upon succesfull docker image creation:
+5. Upon successful docker image creation:
 ```
 docker run --gpus all -it cir_docker /bin/bash
 ```
