@@ -3,7 +3,9 @@
 <p align="center">
     <h1 align="center"><strong>Clinically-Interpretable Radiomics</strong></h1>
     <p align="center">
-    <a href="">Preprint</a>
+    <a href="">MICCAI'22 Paper</a>
+    |
+    <a href="https://arxiv.org/pdf/1808.08307.pdf">CMPB'21 Paper</a>
     |
     <a href="https://zenodo.org/record/6762573">CIRDataset</a>
     |
@@ -27,12 +29,12 @@ This library serves as a one-stop solution for analyzing datasets using clinical
 *Spiculations/lobulations, sharp/curved spikes on the surface of lung nodules, are good predictors of lung cancer malignancy and hence, are routinely assessed and reported by radiologists as part of the standardized Lung-RADS clinical scoring criteria. Given the 3D geometry of the nodule and 2D slice-by-slice assessment by radiologists, manual spiculation/lobulation annotation is a tedious task and thus no public datasets exist to date for probing the importance of these clinically-reported features in the SOTA malignancy prediction algorithms. As part of this paper, we release a large-scale Clinically-Interpretable Radiomics Dataset, CIRDataset, containing 956 radiologist QA/QC'ed spiculation/lobulation annotations on segmented lung nodules from two public datasets, LIDC-IDRI (N=883) and LUNGx (N=73). We also present an end-to-end deep learning model based on multi-class Voxel2Mesh extension to segment nodules (while preserving spikes), classify spikes (sharp/spiculation and curved/lobulation), and perform malignancy prediction. Previous methods have performed malignancy prediction for LIDC and LUNGx datasets but without robust attribution to any clinically reported/actionable features (due to known hyperparameter sensitivity issues with general attribution schemes). With the release of this comprehensively-annotated dataset and end-to-end deep learning baseline, we hope that malignancy prediction methods can validate their explanations, benchmark against our baseline, and provide clinically-actionable insights. Dataset, code, pretrained models, and docker containers to reproduce the pipeline as well as the results in the manuscript are available in this repository.*
 
 ## Dataset
-The first CIR dataset, released [here](https://zenodo.org/record/6762573), contains almost 1000 radiologist QA/QC’ed spiculation/lobulation annotations (computed using our published [LungCancerScreeningRadiomics](https://github.com/taznux/LungCancerScreeningRadiomics) library and QA/QC'ed by a radiologist) on segmented lung nodules for two public datasets, LIDC (with visual radiologist malignancy RM scores for the entire cohort and pathology-proven malignancy PM labels for a subset) and LUNGx (with pathology-proven size-matched benign/malignant nodules to remove the effect of size on malignancy prediction). 
+The first CIR dataset, released [here](https://zenodo.org/record/6762573), contains almost 1000 radiologist QA/QC’ed spiculation/lobulation annotations (computed using our published [LungCancerScreeningRadiomics](https://github.com/taznux/LungCancerScreeningRadiomics) library [CMPB'21] and QA/QC'ed by a radiologist) on segmented lung nodules for two public datasets, LIDC (with visual radiologist malignancy RM scores for the entire cohort and pathology-proven malignancy PM labels for a subset) and LUNGx (with pathology-proven size-matched benign/malignant nodules to remove the effect of size on malignancy prediction). 
 ![overview_image](./images/samples.png)*Clinically-interpretable spiculation/lobulation annotation dataset samples; the first column - input CT image; the second column - overlaid semi-automated/QA/QC'ed contours and superimposed area distortion maps (for quantifying/classifying spikes, computed from spherical parameterization -- see our [LungCancerScreeninigRadiomics Library](https://github.com/taznux/LungCancerScreeningRadiomics)); the third column - 3D mesh model with vertex classifications, red: spiculations, blue: lobulations, white: nodule base.*
 
 ## End-to-End Deep Learning Nodule Segmentation, Spikes' Classification, and Malignancy Prediction Model
 
-We also release our multi-class [Voxel2Mesh](https://github.com/cvlab-epfl/voxel2mesh) extension to provide a strong benchmark for end-to-end deep learning lung nodule segmentation, spikes’ classification (lobulation/spiculation), and malignancy prediction; Voxel2Mesh is the only published method to our knowledge that preserves sharp spikes during segmentation and hence its use as our base model. With the release of this comprehensively-annotated dataset, we hope that previous malignancy prediction methods can also validate their explanations/attributions and provide clinically-actionable insights. Users can also generate spiculation/lobulation annotations from scratch for LIDC/LUNGx as well as new datasets using our [LungCancerScreeningRadiomics](https://github.com/taznux/LungCancerScreeningRadiomics) library.
+We also release our multi-class [Voxel2Mesh](https://github.com/cvlab-epfl/voxel2mesh) extension to provide a strong benchmark for end-to-end deep learning lung nodule segmentation, spikes’ classification (lobulation/spiculation), and malignancy prediction; Voxel2Mesh is the only published method to our knowledge that preserves sharp spikes during segmentation and hence its use as our base model. With the release of this comprehensively-annotated dataset, we hope that previous malignancy prediction methods can also validate their explanations/attributions and provide clinically-actionable insights. Users can also generate spiculation/lobulation annotations from scratch for LIDC/LUNGx as well as new datasets using our [LungCancerScreeningRadiomics](https://github.com/taznux/LungCancerScreeningRadiomics) library [CMPB'21].
 
 ![architecure_image](./images/CIR_architecture.png)*Depiction of end-to-end deep learning architecture based on multi-class Voxel2Mesh extension. The standard UNet based voxel encoder/decoder (top) extracts features from the input CT volumes while the mesh decoder deforms an initial spherical mesh into increasing finer resolution meshes matching the target shape. The mesh deformation utilizes feature vectors sampled from the voxel decoder through the Learned Neighborhood (LN) Sampling technique and also performs adaptive unpooling with increased vertex counts in high curvature areas. We extend the architecture by introducing extra mesh decoder layers for spiculation and lobulation classification. We also sample vertices (shape features) from the final mesh unpooling layer as input to Fully Connected malignancy prediction network. We optionally add deep voxel-features from the last voxel encoder layer to the malignancy prediction network.*
 
@@ -65,7 +67,7 @@ Step 4: Test the trained model. `python test.py`
 Pre-processed data will be saved at the dataset directory.
 
 Step 2.0: Generate nrrd files using LungCancerScreeningRadiomics
-- Lung nodule spiculation data can be generated from the scratch using [LungCancerScreeninigRadiomics](https://github.com/taznux/LungCancerScreeningRadiomics) for LIDC-IDRI and LUNGx dataset.  
+- Lung nodule spiculation data can be generated from the scratch using [LungCancerScreeninigRadiomics](https://github.com/taznux/LungCancerScreeningRadiomics) [CMPB'21] for LIDC-IDRI and LUNGx dataset.  
 
 - Preprocessed data is available [here](https://zenodo.org/record/6762573).
 ```bash
@@ -138,12 +140,22 @@ docker container run --gpus all -it CIR_Docker /bin/bash
 * This code is inspired by [Voxel2Mesh](https://github.com/cvlab-epfl/voxel2mesh).
 
 ## Reference
-If you find our work useful in your research or if you use parts of this code, please cite our paper:
+If you find our work useful in your research or if you use parts of this code or the dataset, please cite the following papers:
 ```
 @article{choi2022cirdataset,
   title={CIRDataset: A large-scale Dataset for Clinically-Interpretable lung nodule Radiomics and malignancy prediction},
   author={Choi, Wookjin and Dahiya, Navdeep and Nadeem, Saad},
   journal={International Conference on Medical Image Computing and Computer-Assisted Intervention (MICCAI)},
   year={2022},
+}
+
+@article{choi2021reproducible,
+  title={Reproducible and Interpretable Spiculation Quantification for Lung Cancer Screening},
+  author={Choi, Wookjin and Nadeem, Saad and Alam, Sadegh R and Deasy, Joseph O and Tannenbaum, Allen and Lu, Wei},
+  journal={Computer Methods and Programs in Biomedicine},
+  volume={200},
+  pages={105839},
+  year={2021},
+  publisher={Elsevier}
 }
 ```
