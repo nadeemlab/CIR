@@ -101,7 +101,7 @@ We provide a Dockerfile that can be used to run the models inside a container.
 First, you need to install the [Docker Engine](https://docs.docker.com/engine/install/ubuntu/). For using GPU's you also need to install [NVIDIA container toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html#docker). After installing the Docker, you need to follow these steps:
 
 * Clone this repository.
-* Download data (CIRDataset_pickle_for_voxel2mesh.tar.bz2) available [here]((https://zenodo.org/record/6762573)).
+* Download data (CIRDataset_pickle_for_voxel2mesh.tar.bz2) available [here](https://zenodo.org/record/6762573).
 * Download pre-trained models, see previous step: Running Pre-trained Models.
 * To create a docker image from the docker file; from top-level repository directory:
 ```
