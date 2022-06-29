@@ -151,7 +151,7 @@ The following tables show the expected results of running the pre-trained 'Mesh
   <tr>
     <td rowspan="2"><b>Network</b></td>
     <td align="center" vetical-align="middel" colspan="3">Chamfer Weighted Symmteric &#8595;</td>
-    <td align="center" vetical-align="middel" colspan="3">Jaccard Index &#8595;</td>
+    <td align="center" vetical-align="middel" colspan="3">Jaccard Index &#8593;</td>
   </tr>
   <tr>
     <td>Class0</td>
@@ -185,7 +185,7 @@ The following tables show the expected results of running the pre-trained 'Mesh
   <tr>
     <td rowspan="2"><b>Network</b></td>
     <td align="center" vetical-align="middel" colspan="3">Chamfer Weighted Symmteric &#8595;</td>
-    <td align="center" vetical-align="middel" colspan="3">Jaccard Index &#8595;</td>
+    <td align="center" vetical-align="middel" colspan="3">Jaccard Index &#8593;</td>
   </tr>
   <tr>
     <td>Class0</td>
@@ -219,7 +219,7 @@ The following tables show the expected results of running the pre-trained 'Mesh
   <tr>
     <td rowspan="2"><b>Network</b></td>
     <td align="center" vetical-align="middel" colspan="3">Chamfer Weighted Symmteric &#8595;</td>
-    <td align="center" vetical-align="middel" colspan="3">Jaccard Index &#8595;</td>
+    <td align="center" vetical-align="middel" colspan="3">Jaccard Index &#8593;</td>
   </tr>
   <tr>
     <td>Class0</td>
@@ -253,7 +253,7 @@ The following tables show the expected results of running the pre-trained 'Mesh
   <tr>
     <td rowspan="2"><b>Network</b></td>
     <td align="center" vetical-align="middel" colspan="3">Chamfer Weighted Symmteric &#8595;</td>
-    <td align="center" vetical-align="middel" colspan="3">Jaccard Index &#8595;</td>
+    <td align="center" vetical-align="middel" colspan="3">Jaccard Index &#8593;</td>
   </tr>
   <tr>
     <td>Class0</td>
