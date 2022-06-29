@@ -69,7 +69,7 @@ Pre-processed data will be saved at the dataset directory.
 Step 2.0: Generate nrrd files using LungCancerScreeningRadiomics
 - Lung nodule spiculation data can be generated from the scratch using [LungCancerScreeninigRadiomics](https://github.com/taznux/LungCancerScreeningRadiomics) [CMPB'21] for LIDC-IDRI and LUNGx dataset.  
 
-- Preprocessed data is available [here](https://zenodo.org/record/6762573).
+- Pre-processed data is available [here](https://zenodo.org/record/6762573).
 ```bash
    tar xjvf CIRDataset_LCSR.tar.bz2
 ```
@@ -86,7 +86,7 @@ Step 2.1: Convert isotropic voxel data from LungCancerScreeningRadiomics to 64x6
     LIDC-IDRI-0001_iso0.70_s_0_nodule.npy       - Nodule Segmentation  
     LIDC-IDRI-0001_iso0.70_s_0_spikes.npy        - Spike Classification - Spiculation:1, Lobulation: 2, Attachment: 3  
 
-- Preprocessed data is available [here](https://zenodo.org/record/6762573).
+- Pre-processed data is available [here](https://zenodo.org/record/6762573).
 ```bash
    tar xjvf CIRDataset_npy_for_cnn.tar.bz2
 ```
@@ -101,7 +101,7 @@ Step 2.2: Divide datasets into subsets (Training, Validation, Testing), extract 
   pre_computed_data_validation_64_64_64.pickle (LUNGx does not have this)  
   pre_computed_data_testing_64_64_64.pickle  
 
-- Preprocessed data is available [here](https://zenodo.org/record/6762573).
+- Pre-processed data is available [here](https://zenodo.org/record/6762573).
 ```bash
    tar xjvf CIRDataset_pickle_for_voxel2mesh.tar.bz2
 ```
@@ -122,19 +122,23 @@ Step 2.2: Divide datasets into subsets (Training, Validation, Testing), extract 
 We provide a Dockerfile that can be used to run the models inside a container.
 First, you need to install the [Docker Engine](https://docs.docker.com/engine/install/ubuntu/). For using GPU's you also need to install [NVIDIA container toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html#docker). After installing the Docker, you need to follow these steps:
 
-* Clone this repository.
-* Download data (CIRDataset_pickle_for_voxel2mesh.tar.bz2) available [here](https://zenodo.org/record/6762573).
-* Download pre-trained models, see previous step: Running Pre-trained Models.
-* To create a docker image from the docker file; from top-level repository directory:
+1. Clone this repository.
+2. Download data (CIRDataset_pickle_for_voxel2mesh.tar.bz2) available [here](https://zenodo.org/record/6762573).
+3. Download pre-trained models, see previous step: Running Pre-trained Models.
+4. To create a docker image from the docker file; from top-level repository directory:
 ```
-docker build -f Dockerfile_CIR -t CIR_Docker .
+docker build -f Dockerfile_CIR -t cir_docker .
 ```
 * Note: You may need to modify lines 1 and 9 of Dockerfile_CIR to match your systems' cuda version.
-* Upon succesfull docker image creation:
+5. Upon succesfull docker image creation:
 ```
-docker container run --gpus all -it CIR_Docker /bin/bash
+docker run --gpus all -it cir_docker /bin/bash
 ```
-* Then run `python test.py --model_path experiments/MICCAI2022/Experiment_001/trial_1` or `python test.py --model_path experiments/MICCAI2022/Experiment_002/trial_1` for testing either of the two pre-trained models.
+* Pre-built docker image including data and pre-trained models is available [here](https://hub.docker.com/repository/docker/choilab/cir_docker/)
+```
+docker run --gpus all -it choilab/cir_docker /bin/bash
+```
+6. Then run `python3 test.py --model_path experiments/MICCAI2022/Experiment_001/trial_1` or `python3 test.py --model_path experiments/MICCAI2022/Experiment_002/trial_1` for testing either of the two pre-trained models.
 
 ## Acknowledgments
 * This code is inspired by [Voxel2Mesh](https://github.com/cvlab-epfl/voxel2mesh).
