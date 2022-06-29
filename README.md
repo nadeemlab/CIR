@@ -140,6 +140,263 @@ docker run --gpus all -it choilab/cir_docker /bin/bash
 ```
 6. Then run `python3 test.py --model_path experiments/MICCAI2022/Experiment_001/trial_1` or `python3 test.py --model_path experiments/MICCAI2022/Experiment_002/trial_1` for testing either of the two pre-trained models.
 
+### Reproducibility [MICCAI'22]
+The following tables show the expected results of running the pre-trained 'Mesh Only' and 'Mesh+Encoder' models.
+
+*Table1. Nodule (Class0), spiculation (Class1), and lobulation (Class2) peak classification metrics*
+<table>
+  <tr>
+    <th colspan="7">Training</th>
+  </tr>
+  <tr>
+    <td rowspan="2"><b>Network</b></td>
+    <td align="center" vetical-align="middel" colspan="3">Chamfer Weighted Symmteric &#8595;</td>
+    <td align="center" vetical-align="middel" colspan="3">Jaccard Index &#8595;</td>
+  </tr>
+  <tr>
+    <td>Class0</td>
+    <td>Class1</td>
+    <td>Class2</td>
+    <td>Class0</td>
+    <td>Class1</td>
+    <td>Class2</td>
+  </tr>
+  <tr>
+    <td><b>Mesh Only</b></td>
+    <td>0.009</td>
+    <td>0.010</td>
+    <td>0.013</td>
+    <td>0.507</td>
+    <td>0.493</td>
+    <td>0.430</td>
+  </tr>
+  <tr>
+    <td><b>Mesh+Encoder</b></td>
+    <td>0.008</td>
+    <td>0.009</td>
+    <td>0.011</td>
+    <td>0.488</td>
+    <td>0.456</td>
+    <td>0.410</td>
+  </tr>
+  <tr>
+    <th colspan="7">Validation</th>
+  </tr>
+  <tr>
+    <td rowspan="2"><b>Network</b></td>
+    <td align="center" vetical-align="middel" colspan="3">Chamfer Weighted Symmteric &#8595;</td>
+    <td align="center" vetical-align="middel" colspan="3">Jaccard Index &#8595;</td>
+  </tr>
+  <tr>
+    <td>Class0</td>
+    <td>Class1</td>
+    <td>Class2</td>
+    <td>Class0</td>
+    <td>Class1</td>
+    <td>Class2</td>
+  </tr>
+  <tr>
+    <td><b>Mesh Only</b></td>
+    <td>0.010</td>
+    <td>0.011</td>
+    <td>0.014</td>
+    <td>0.526</td>
+    <td>0.502</td>
+    <td>0.451</td>
+  </tr>
+  <tr>
+    <td><b>Mesh+Encoder</b></td>
+    <td>0.014</td>
+    <td>0.015</td>
+    <td>0.018</td>
+    <td>0.488</td>
+    <td>0.472</td>
+    <td>0.433</td>
+  </tr>
+  <tr>
+    <th colspan="7">Testing LIDC-PM N=72</th>
+  </tr>
+  <tr>
+    <td rowspan="2"><b>Network</b></td>
+    <td align="center" vetical-align="middel" colspan="3">Chamfer Weighted Symmteric &#8595;</td>
+    <td align="center" vetical-align="middel" colspan="3">Jaccard Index &#8595;</td>
+  </tr>
+  <tr>
+    <td>Class0</td>
+    <td>Class1</td>
+    <td>Class2</td>
+    <td>Class0</td>
+    <td>Class1</td>
+    <td>Class2</td>
+  </tr>
+  <tr>
+    <td><b>Mesh Only</b></td>
+    <td>0.011</td>
+    <td>0.011</td>
+    <td>0.014</td>
+    <td>0.561</td>
+    <td>0.553</td>
+    <td>0.510</td>
+  </tr>
+  <tr>
+    <td><b>Mesh+Encoder</b></td>
+    <td>0.009</td>
+    <td>0.010</td>
+    <td>0.012</td>
+    <td>0.558</td>
+    <td>0.541</td>
+    <td>0.507</td>
+  </tr>
+  <tr>
+    <th colspan="7">Testing LUNGx N=73</th>
+  </tr>
+  <tr>
+    <td rowspan="2"><b>Network</b></td>
+    <td align="center" vetical-align="middel" colspan="3">Chamfer Weighted Symmteric &#8595;</td>
+    <td align="center" vetical-align="middel" colspan="3">Jaccard Index &#8595;</td>
+  </tr>
+  <tr>
+    <td>Class0</td>
+    <td>Class1</td>
+    <td>Class2</td>
+    <td>Class0</td>
+    <td>Class1</td>
+    <td>Class2</td>
+  </tr>
+  <tr>
+    <td><b>Mesh Only</b></td>
+    <td>0.029</td>
+    <td>0.028</td>
+    <td>0.030</td>
+    <td>0.502</td>
+    <td>0.537</td>
+    <td>0.545</td>
+  </tr>
+  <tr>
+    <td><b>Mesh+Encoder</b></td>
+    <td>0.017</td>
+    <td>0.017</td>
+    <td>0.019</td>
+    <td>0.506</td>
+    <td>0.523</td>
+    <td>0.525</td>
+  </tr>
+</table>
+&nbsp;  
+
+*Table 2. Malignancy prediction metrics.*
+<table>
+  <tr>
+    <th colspan="6">Training</th>
+  </tr>
+  <tr>
+    <td><b>Network</b></td>
+    <td>AUC</td>
+    <td>Accuracy</td>
+    <td>Sensitivity</td>
+    <td>Specificity</td>
+    <td>F1</td>
+  </tr>
+  <tr>
+    <td><b>Mesh Only</b></td>
+    <td>0.885</td>
+    <td>80.25</td>
+    <td>54.84</td>
+    <td>93.04</td>
+    <td>65.03</td>
+  </tr>
+  <tr>
+    <td><b>Mesh+Encoder</b></td>
+    <td>0.899</td>
+    <td>80.71</td>
+    <td>55.76</td>
+    <td>93.27</td>
+    <td>65.94</td>
+  </tr>
+  <tr>
+    <th colspan="6">Validation</th>
+  </tr>
+  <tr>
+    <td><b>Network</b></td>
+    <td>AUC</td>
+    <td>Accuracy</td>
+    <td>Sensitivity</td>
+    <td>Specificity</td>
+    <td>F1</td>
+  </tr>
+  <tr>
+    <td><b>Mesh Only</b></td>
+    <td>0.881</td>
+    <td>80.37</td>
+    <td>53.06</td>
+    <td>92.11</td>
+    <td>61.90</td>
+  </tr>
+  <tr>
+    <td><b>Mesh+Encoder</b></td>
+    <td>0.808</td>
+    <td>75.46</td>
+    <td>42.86</td>
+    <td>89.47</td>
+    <td>51.22</td>
+  </tr>
+  <tr>
+    <th colspan="6">Testing LIDC-PM N=72</th>
+  </tr>
+  <tr>
+    <td><b>Network</b></td>
+    <td>AUC</td>
+    <td>Accuracy</td>
+    <td>Sensitivity</td>
+    <td>Specificity</td>
+    <td>F1</td>
+  </tr>
+  <tr>
+    <td><b>Mesh Only</b></td>
+    <td>0.790</td>
+    <td>70.83</td>
+    <td>56.10</td>
+    <td>90.32</td>
+    <td>68.66</td>
+  </tr>
+  <tr>
+    <td><b>Mesh+Encoder</b></td>
+    <td>0.813</td>
+    <td>79.17</td>
+    <td>70.73</td>
+    <td>90.32</td>
+    <td>79.45</td>
+  </tr>
+  <tr>
+    <th colspan="6">Testing LUNGx N=73</th>
+  </tr>
+  <tr>
+    <td><b>Network</b></td>
+    <td>AUC</td>
+    <td>Accuracy</td>
+    <td>Sensitivity</td>
+    <td>Specificity</td>
+    <td>F1</td>
+  </tr>
+  <tr>
+    <td><b>Mesh Only</b></td>
+    <td>0.733</td>
+    <td>68.49</td>
+    <td>80.56</td>
+    <td>56.76</td>
+    <td>71.60</td>
+  </tr>
+  <tr>
+    <td><b>Mesh+Encoder</b></td>
+    <td>0.743</td>
+    <td>65.75</td>
+    <td>86.11</td>
+    <td>45.95</td>
+    <td>71.26</td>
+  </tr>
+</table>
+
+
 ## Acknowledgments
 * This code is inspired by [Voxel2Mesh](https://github.com/cvlab-epfl/voxel2mesh).
 
