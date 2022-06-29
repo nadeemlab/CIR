@@ -1,0 +1,12 @@
+FROM nvidia/cuda:11.4.1-cudnn8-devel-ubuntu20.04
+ARG DEBIAN_FRONTEND=noninteractive
+RUN apt-get update -y && \
+    apt-get install -y \
+    gcc git wget \
+    ffmpeg libsm6 libxext6 \
+    python3.8 python3.8-dev python3-pip
+    
+RUN pip install torch torchvision torchaudio --extra-index-url https://download.pytorch.org/whl/cu113
+RUN pip install "git+https://github.com/facebookresearch/pytorch3d.git"
+RUN pip install wandb sklearn scikit-image ipython ninja pandas opencv-python tqdm
+COPY . ./
