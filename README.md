@@ -9,7 +9,7 @@
     |
     <a href="https://zenodo.org/record/6762573">CIRDataset</a>
     |
-    <a href="https://github.com/taznux/LungCancerScreeningRadiomics">Annotation Pipeline</a>
+    <a href="https://github.com/choilab-jefferson/LungCancerScreeningRadiomics">Annotation Pipeline</a>
     |
     <a href="#installation">Installation</a>
     |
@@ -22,19 +22,19 @@
 </p>
 
 
-This library serves as a one-stop solution for analyzing datasets using clinically-interpretable radiomics (CIR) in cancer imaging. The primary motivation for this comes from our collaborators in radiology and radiation oncology inquiring about the importance of clinically-reported features in state-of-the-art deep learning malignancy/recurrence/treatment response prediction algorithms. Previous methods have performed such prediction tasks but without robust attribution to any clinically reported/actionable features (see extensive literature on sensitivity of attribution methods to hyperparameters). This motivated us to curate datasets by annotating clinically-reported features at voxel/vertex-level on public datasets (using our CMPB'21 [advanced mathmetical algorithms](https://github.com/taznux/LungCancerScreeningRadiomics)) and relating these to prediction tasks (bypassing the “flaky” attribution schemes). With the release of these comprehensively-annotated datasets, we hope that previous malignancy prediction methods can also validate their explanations and provide clinically-actionable insights. We also provide strong end-to-end baselines for extracting these hard-to-compute clinically-reported features and using these in different prediction tasks. 
+This library serves as a one-stop solution for analyzing datasets using clinically-interpretable radiomics (CIR) in cancer imaging. The primary motivation for this comes from our collaborators in radiology and radiation oncology inquiring about the importance of clinically-reported features in state-of-the-art deep learning malignancy/recurrence/treatment response prediction algorithms. Previous methods have performed such prediction tasks but without robust attribution to any clinically reported/actionable features (see extensive literature on sensitivity of attribution methods to hyperparameters). This motivated us to curate datasets by annotating clinically-reported features at voxel/vertex-level on public datasets (using our CMPB'21 [advanced mathmetical algorithms](https://github.com/choilab-jefferson/LungCancerScreeningRadiomics)) and relating these to prediction tasks (bypassing the “flaky” attribution schemes). With the release of these comprehensively-annotated datasets, we hope that previous malignancy prediction methods can also validate their explanations and provide clinically-actionable insights. We also provide strong end-to-end baselines for extracting these hard-to-compute clinically-reported features and using these in different prediction tasks. 
 
 ## CIRDataset: A large-scale Dataset for Clinically-Interpretable lung nodule Radiomics and malignancy prediction [MICCAI'22]
 
 *Spiculations/lobulations, sharp/curved spikes on the surface of lung nodules, are good predictors of lung cancer malignancy and hence, are routinely assessed and reported by radiologists as part of the standardized Lung-RADS clinical scoring criteria. Given the 3D geometry of the nodule and 2D slice-by-slice assessment by radiologists, manual spiculation/lobulation annotation is a tedious task and thus no public datasets exist to date for probing the importance of these clinically-reported features in the SOTA malignancy prediction algorithms. As part of this paper, we release a large-scale Clinically-Interpretable Radiomics Dataset, CIRDataset, containing 956 radiologist QA/QC'ed spiculation/lobulation annotations on segmented lung nodules from two public datasets, LIDC-IDRI (N=883) and LUNGx (N=73). We also present an end-to-end deep learning model based on multi-class Voxel2Mesh extension to segment nodules (while preserving spikes), classify spikes (sharp/spiculation and curved/lobulation), and perform malignancy prediction. Previous methods have performed malignancy prediction for LIDC and LUNGx datasets but without robust attribution to any clinically reported/actionable features (due to known hyperparameter sensitivity issues with general attribution schemes). With the release of this comprehensively-annotated dataset and end-to-end deep learning baseline, we hope that malignancy prediction methods can validate their explanations, benchmark against our baseline, and provide clinically-actionable insights. Dataset, code, pretrained models, and docker containers to reproduce the pipeline as well as the results in the manuscript are available in this repository.*
 
 ## Dataset
-The first CIR dataset, released [here](https://zenodo.org/record/6762573), contains almost 1000 radiologist QA/QC’ed spiculation/lobulation annotations (computed using our published [LungCancerScreeningRadiomics](https://github.com/taznux/LungCancerScreeningRadiomics) library [CMPB'21] and QA/QC'ed by a radiologist) on segmented lung nodules for two public datasets, LIDC (with visual radiologist malignancy RM scores for the entire cohort and pathology-proven malignancy PM labels for a subset) and LUNGx (with pathology-proven size-matched benign/malignant nodules to remove the effect of size on malignancy prediction). 
-![overview_image](./images/samples.png)*Clinically-interpretable spiculation/lobulation annotation dataset samples; the first column - input CT image; the second column - overlaid semi-automated/QA/QC'ed contours and superimposed area distortion maps (for quantifying/classifying spikes, computed from spherical parameterization -- see our [LungCancerScreeninigRadiomics Library](https://github.com/taznux/LungCancerScreeningRadiomics)); the third column - 3D mesh model with vertex classifications, red: spiculations, blue: lobulations, white: nodule base.*
+The first CIR dataset, released [here](https://zenodo.org/record/6762573), contains almost 1000 radiologist QA/QC’ed spiculation/lobulation annotations (computed using our published [LungCancerScreeningRadiomics](https://github.com/choilab-jefferson/LungCancerScreeningRadiomics) library [CMPB'21] and QA/QC'ed by a radiologist) on segmented lung nodules for two public datasets, LIDC (with visual radiologist malignancy RM scores for the entire cohort and pathology-proven malignancy PM labels for a subset) and LUNGx (with pathology-proven size-matched benign/malignant nodules to remove the effect of size on malignancy prediction). 
+![overview_image](./images/samples.png)*Clinically-interpretable spiculation/lobulation annotation dataset samples; the first column - input CT image; the second column - overlaid semi-automated/QA/QC'ed contours and superimposed area distortion maps (for quantifying/classifying spikes, computed from spherical parameterization -- see our [LungCancerScreeninigRadiomics Library](https://github.com/choilab-jefferson/LungCancerScreeningRadiomics)); the third column - 3D mesh model with vertex classifications, red: spiculations, blue: lobulations, white: nodule base.*
 
 ## End-to-End Deep Learning Nodule Segmentation, Spikes' Classification (Spiculation/Lobulation), and Malignancy Prediction Model
 
-We also release our multi-class [Voxel2Mesh](https://github.com/cvlab-epfl/voxel2mesh) extension to provide a strong benchmark for end-to-end deep learning lung nodule segmentation, spikes’ classification (lobulation/spiculation), and malignancy prediction; Voxel2Mesh is the only published method to our knowledge that preserves sharp spikes during segmentation and hence its use as our base model. With the release of this comprehensively-annotated dataset, we hope that previous malignancy prediction methods can also validate their explanations/attributions and provide clinically-actionable insights. Users can also generate spiculation/lobulation annotations from scratch for LIDC/LUNGx as well as new datasets using our [LungCancerScreeningRadiomics](https://github.com/taznux/LungCancerScreeningRadiomics) library [CMPB'21].
+We also release our multi-class [Voxel2Mesh](https://github.com/cvlab-epfl/voxel2mesh) extension to provide a strong benchmark for end-to-end deep learning lung nodule segmentation, spikes’ classification (lobulation/spiculation), and malignancy prediction; Voxel2Mesh is the only published method to our knowledge that preserves sharp spikes during segmentation and hence its use as our base model. With the release of this comprehensively-annotated dataset, we hope that previous malignancy prediction methods can also validate their explanations/attributions and provide clinically-actionable insights. Users can also generate spiculation/lobulation annotations from scratch for LIDC/LUNGx as well as new datasets using our [LungCancerScreeningRadiomics](https://github.com/choilab-jefferson/LungCancerScreeningRadiomics) library [CMPB'21].
 
 ![architecure_image](./images/CIR_architecture.png)*Depiction of end-to-end deep learning architecture based on multi-class Voxel2Mesh extension. The standard UNet based voxel encoder/decoder (top) extracts features from the input CT volumes while the mesh decoder deforms an initial spherical mesh into increasing finer resolution meshes matching the target shape. The mesh deformation utilizes feature vectors sampled from the voxel decoder through the Learned Neighborhood (LN) Sampling technique and also performs adaptive unpooling with increased vertex counts in high curvature areas. We extend the architecture by introducing extra mesh decoder layers for spiculation and lobulation classification. We also sample vertices (shape features) from the final mesh unpooling layer as input to Fully Connected malignancy prediction network. We optionally add deep voxel-features from the last voxel encoder layer to the malignancy prediction network.*
 
@@ -43,7 +43,7 @@ It is highly recommended to install dependencies in either a python virtual envi
 ```bash
 python3 -m venv venv
 source venv/bin/activate
-(venv) pip install torch torchvision torchaudio --extra-index-url https://download.pytorch.org/whl/cu113
+(venv) pip install torch==1.11.0 torchvision torchaudio --extra-index-url https://download.pytorch.org/whl/cu113
 (venv) pip install --no-index --no-cache-dir pytorch3d -f https://dl.fbaipublicfiles.com/pytorch3d/packaging/wheels/py38_cu113_pyt1110/download.html
 (venv) pip install wandb sklearn scikit-image ipython ninja pandas opencv-python tqdm
 ```
@@ -67,7 +67,7 @@ Step 4: Test the trained model. `python test.py`
 Pre-processed data will be saved at the dataset directory.
 
 Step 2.0: Generate nrrd files using LungCancerScreeningRadiomics
-- Lung nodule spiculation data can be generated from the scratch using [LungCancerScreeninigRadiomics](https://github.com/taznux/LungCancerScreeningRadiomics) [CMPB'21] for LIDC-IDRI and LUNGx dataset.  
+- Lung nodule spiculation data can be generated from the scratch using [LungCancerScreeninigRadiomics](https://github.com/choilab-jefferson/LungCancerScreeningRadiomics) [CMPB'21] for LIDC-IDRI and LUNGx dataset.  
 
 - Pre-processed data is available [here](https://zenodo.org/record/6762573).
 ```bash
@@ -123,22 +123,17 @@ We provide a Dockerfile that can be used to run the models inside a container.
 First, you need to install the [Docker Engine](https://docs.docker.com/engine/install/ubuntu/). For using GPU's you also need to install [NVIDIA container toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html#docker). After installing the Docker, you need to follow these steps:
 
 1. Clone this repository.
-2. Download data (CIRDataset_pickle_for_voxel2mesh.tar.bz2) available [here](https://zenodo.org/record/6762573).
-3. Download pre-trained models, see previous step: Running Pre-trained Models.
-4. To create a docker image from the docker file; from top-level repository directory:
+2. To create a docker image from the docker file; from top-level repository directory:
 ```
-docker build -f Dockerfile_CIR -t cir_docker .
+cd docker; ./build.sh
 ```
-* Note: You may need to modify lines 1 and 9 of Dockerfile_CIR to match your systems' cuda version.
-5. Upon successful docker image creation:
+* Note: You may need to modify lines 1, 9 and 10 of Dockerfile to match your systems' cuda version.
+3. Upon successful docker image creation:
+* Pre-built docker image including data and pre-trained models is available [here](https://hub.docker.com/r/choilab/cir)
 ```
-docker run --gpus all -it cir_docker /bin/bash
+docker run --gpus all -it choilab/cir /bin/bash
 ```
-* Pre-built docker image including data and pre-trained models is available [here](https://hub.docker.com/r/choilab/cir_docker)
-```
-docker run --gpus all -it choilab/cir_docker /bin/bash
-```
-6. Then run `python3 test.py --model_path experiments/MICCAI2022/Experiment_001/trial_1` or `python3 test.py --model_path experiments/MICCAI2022/Experiment_002/trial_1` for testing either of the two pre-trained models.
+4. Then run `python3 test.py --model_path experiments/MICCAI2022/Experiment_001/trial_1` or `python3 test.py --model_path experiments/MICCAI2022/Experiment_002/trial_1` for testing either of the two pre-trained models.
 
 ### Reproducibility [MICCAI'22]
 The following tables show the expected results of running the pre-trained 'Mesh Only' and 'Mesh+Encoder' models.
