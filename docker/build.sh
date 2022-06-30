@@ -1,1 +1,1 @@
-docker build -t choilab/cir_docker:latest .
+docker build -t choilab/cir:latest .

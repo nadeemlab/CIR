@@ -123,22 +123,17 @@ We provide a Dockerfile that can be used to run the models inside a container.
 First, you need to install the [Docker Engine](https://docs.docker.com/engine/install/ubuntu/). For using GPU's you also need to install [NVIDIA container toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html#docker). After installing the Docker, you need to follow these steps:
 
 1. Clone this repository.
-2. Download data (CIRDataset_pickle_for_voxel2mesh.tar.bz2) available [here](https://zenodo.org/record/6762573).
-3. Download pre-trained models, see previous step: Running Pre-trained Models.
-4. To create a docker image from the docker file; from top-level repository directory:
+2. To create a docker image from the docker file; from top-level repository directory:
 ```
-docker build -f Dockerfile_CIR -t cir_docker .
+cd docker; ./build.sh
 ```
-* Note: You may need to modify lines 1 and 9 of Dockerfile_CIR to match your systems' cuda version.
-5. Upon successful docker image creation:
+* Note: You may need to modify lines 1, 9 and 10 of Dockerfile to match your systems' cuda version.
+3. Upon successful docker image creation:
+* Pre-built docker image including data and pre-trained models is available [here](https://hub.docker.com/r/choilab/cir)
 ```
-docker run --gpus all -it cir_docker /bin/bash
+docker run --gpus all -it choilab/cir /bin/bash
 ```
-* Pre-built docker image including data and pre-trained models is available [here](https://hub.docker.com/r/choilab/cir_docker)
-```
-docker run --gpus all -it choilab/cir_docker /bin/bash
-```
-6. Then run `python3 test.py --model_path experiments/MICCAI2022/Experiment_001/trial_1` or `python3 test.py --model_path experiments/MICCAI2022/Experiment_002/trial_1` for testing either of the two pre-trained models.
+4. Then run `python3 test.py --model_path experiments/MICCAI2022/Experiment_001/trial_1` or `python3 test.py --model_path experiments/MICCAI2022/Experiment_002/trial_1` for testing either of the two pre-trained models.
 
 ### Reproducibility [MICCAI'22]
 The following tables show the expected results of running the pre-trained 'Mesh Only' and 'Mesh+Encoder' models.
