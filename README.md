@@ -3,7 +3,7 @@
 <p align="center">
     <h1 align="center"><strong>Clinically-Interpretable Radiomics</strong></h1>
     <p align="center">
-    <a href="">MICCAI'22 Paper</a>
+    <a href="https://arxiv.org/pdf/2206.14903.pdf">MICCAI'22 Paper</a>
     |
     <a href="https://arxiv.org/pdf/1808.08307.pdf">CMPB'21 Paper</a>
     |
