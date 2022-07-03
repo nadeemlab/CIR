@@ -136,7 +136,7 @@ docker run --gpus all -it choilab/cir /bin/bash
 4. Then run `python3 test.py --model_path experiments/MICCAI2022/Experiment_001/trial_1` or `python3 test.py --model_path experiments/MICCAI2022/Experiment_002/trial_1` for testing either of the two pre-trained models.
 
 ### Reproducibility [MICCAI'22]
-The following tables show the expected results of running the pre-trained 'Mesh Only' and 'Mesh+Encoder' models.
+The following tables show the expected results of running the pre-trained 'Mesh Only' and 'Mesh+Encoder' models (as **reported in the paper**).
 
 *Table1. Nodule (Class0), spiculation (Class1), and lobulation (Class2) peak classification metrics*
 <table>
