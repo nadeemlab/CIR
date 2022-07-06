@@ -30,6 +30,11 @@ This library serves as a one-stop solution for analyzing datasets using clinical
 
 ## Dataset
 The first CIR dataset, released [here](https://zenodo.org/record/6762573), contains almost 1000 radiologist QA/QC’ed spiculation/lobulation annotations (computed using our published [LungCancerScreeningRadiomics](https://github.com/choilab-jefferson/LungCancerScreeningRadiomics) library [CMPB'21] and QA/QC'ed by a radiologist) on segmented lung nodules for two public datasets, LIDC (with visual radiologist malignancy RM scores for the entire cohort and pathology-proven malignancy PM labels for a subset) and LUNGx (with pathology-proven size-matched benign/malignant nodules to remove the effect of size on malignancy prediction). 
+
+![Spiculation Quantification Demo](./images/spiculation_quantification_video.gif)
+
+*Spikes (spiculation/lobulation) quantification via angle-preserving spherical parameterization [CMPB'21](https://arxiv.org/pdf/1808.08307.pdf). The spikes on the surface of a nodule are detected/segmented using the negative area distortion metric (in other words, spikes on the surface will collapse in area on the spherically-mapped surface whereas non-spike parts will expand in area). This leads to a computationally simple/robust algorithm with zero hyperparameters.*
+
 ![overview_image](./images/samples.png)*Clinically-interpretable spiculation/lobulation annotation dataset samples; the first column - input CT image; the second column - overlaid semi-automated/QA/QC'ed contours and superimposed area distortion maps (for quantifying/classifying spikes, computed from spherical parameterization -- see our [LungCancerScreeninigRadiomics Library](https://github.com/choilab-jefferson/LungCancerScreeningRadiomics)); the third column - 3D mesh model with vertex classifications, red: spiculations, blue: lobulations, white: nodule base.*
 
 ## End-to-End Deep Learning Nodule Segmentation, Spikes' Classification (Spiculation/Lobulation), and Malignancy Prediction Model
