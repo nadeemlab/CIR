@@ -33,7 +33,7 @@ The first CIR dataset, released [here](https://zenodo.org/record/6762573), conta
 
 ![Spiculation Quantification Demo](./images/spiculation_quantification_video.gif)
 
-*Spikes (spiculation/lobulation) quantification via angle-preserving spherical parameterization [CMPB'21](https://arxiv.org/pdf/1808.08307.pdf). The spikes on the surface of a nodule are detected/segmented using the negative area distortion metric (in other words, spikes on the surface will collapse in area on the spherically-mapped surface whereas non-spike parts will expand in area). This leads to a computationally simple/robust algorithm with zero hyperparameters.*
+*Spikes (spiculation/lobulation) quantification via angle-preserving spherical parameterization [CMPB'21](https://arxiv.org/pdf/1808.08307.pdf). The spikes on the surface of a nodule are detected/segmented using the **negative area distortion metric** (in other words, spikes on the surface will collapse in area on the spherically-mapped surface whereas non-spike parts will expand in area). This leads to a computationally simple/robust algorithm with zero hyperparameters.*
 
 ![overview_image](./images/samples.png)*Clinically-interpretable spiculation/lobulation annotation dataset samples; the first column - input CT image; the second column - overlaid semi-automated/QA/QC'ed contours and superimposed area distortion maps (for quantifying/classifying spikes, computed from spherical parameterization -- see our [LungCancerScreeninigRadiomics Library](https://github.com/choilab-jefferson/LungCancerScreeningRadiomics)); the third column - 3D mesh model with vertex classifications, red: spiculations, blue: lobulations, white: nodule base.*
 
