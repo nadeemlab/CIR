@@ -1,5 +1,6 @@
 from dataset.lidc import LIDC
 from dataset.lungx import LUNGx
+from dataset.msklung import MSKLung
 
 class Config():
     def __init__(self):
@@ -10,7 +11,7 @@ def load_config():
       
     cfg = Config()
     ''' Experiment '''
-    cfg.experiment_idx = 1 
+    cfg.experiment_idx = 3 
     cfg.trial_id = None
 
     cfg.device = "cuda:0"
@@ -25,6 +26,7 @@ def load_config():
     cfg.save_path = './experiments/MICCAI2022/'   # UPDATE HERE <<<<<<<<<<<<<<<<<<<<<<
     cfg.dataset_path = './DATA/LIDC_spiculation/generated_vol_iso64x64x64/' # UPDATE HERE <<<<<<<<<<<<<<<<<<<<<<
     cfg.ext_dataset_path = './DATA/LUNGx_spiculation/generated_vol_iso64x64x64/' # UPDATE HERE <<<<<<<<<<<<<<<<<<<<<<
+    cfg.ext_dataset1_path = './DATA/MSKLung_spiculation/generated_vol_iso64x64x64/' # UPDATE HERE <<<<<<<<<<<<<<<<<<<<<<
     
     # cfg.save_path = '/your/path/to/experiments/MICCAI2022/' # results will be saved here
     # cfg.dataset_path = '/your/path/to/dataset' # path to the dataset
@@ -36,6 +38,7 @@ def load_config():
     #cfg.data_obj = None     # UPDATE HERE <<<<<<<<<<<<<<<<<<<<<<
     cfg.data_obj = LIDC() 
     cfg.data_obj_ext = LUNGx() 
+    cfg.data_obj_ext1 = MSKLung() 
 
 
     assert cfg.save_path != None, "Set cfg.save_path in config.py"

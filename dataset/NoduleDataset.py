@@ -146,18 +146,18 @@ def create_sub_volumes(ct_image, ard_image, label, spike_label, samples, crop_si
     spike_label_np = sitk.GetArrayFromImage(spike_label)#.astype("uint8")
 
     images = [
-        postproc_medical_image(ct_np, type = 'CT').unsqueeze(0),
-        postproc_medical_image(ard_np, type = 'map', crop_size=ct_np.shape).unsqueeze(0), 
-        postproc_medical_image(label_np, type = 'label').unsqueeze(0), 
+        postproc_medical_image(ct_np, type = 'CT'),
+        postproc_medical_image(ard_np, type = 'map', crop_size=ct_np.shape), 
+        postproc_medical_image(label_np, type = 'label'), 
         postproc_medical_image(spike_label_np, type = 'label', crop_size=ct_np.shape),
     ]
-    images[3] += images[2][0] # add nodule region other than spikes and attachements
+    images[3] += images[2] # add nodule region other than spikes and attachements
     modalities = len(images)
     list = []
     # print(modalities)
     # print(ls[2])
 
-    full_segmentation_map = images[2][0]
+    full_segmentation_map = images[2]
     
     crops = np.nonzero(full_segmentation_map).numpy() - (np.asarray(crop_size)/2).astype(int)
     np.random.shuffle(crops)
@@ -180,7 +180,8 @@ def create_sub_volumes(ct_image, ard_image, label, spike_label, samples, crop_si
         for j in range(modalities):
             f_t1 = filename + MODALITIES[j] + '.npy'
             list_saved_paths.append(f_t1)
-
+            if j != 3:
+                tensor_images[j] = tensor_images[j].unsqueeze(0)
             np.save(f_t1, tensor_images[j])
             
         list.append(tuple([pid]+list_saved_paths))
@@ -194,7 +195,7 @@ def postproc_medical_image(img_np, type=None, normalization='full_volume_mean', 
         img_np = percentile_clip(img_np)
 
     # Intensity normalization
-    img_tensor = torch.from_numpy(img_np)
+    img_tensor = torch.from_numpy(img_np.astype("float"))
 
     MEAN, STD, MAX, MIN = 0., 1., 1., 0.
     if type == 'CT':
@@ -269,7 +270,7 @@ class NoduleDataset(Dataset):
         :param load (boolean, optional): to load the generated data offline for faster reading and not load RAM
         """
         self.root_dir = osp.expanduser(root_dir)
-        self.samples = 0
+        self.samples = 10
         self.crop_size = (64, 64, 64)  # width, height, slice
         self.list = []
         self.threshold = 0.00000000001
@@ -296,10 +297,10 @@ class NoduleDataset(Dataset):
         # LIDC-IDRI-0001_CT_1-all-spikes-label.nrrd  <- Spiculation:1, Lobulation: 2, Attachment: 3
 
         ard_files = glob.glob(f"{self.root_dir}/{pid}/{pid}_CT_*-ard.nrrd")
-        nid = 1
         for ard_file in ard_files:
             ard_image = sitk.ReadImage(ard_file)
-
+            nid = "-".join(osp.basename(ard_file).split("_")[2].split("-")[0:2])
+            
             ct_file = ard_file.replace("-ard","")
             ct_image = sitk.ReadImage(ct_file)
             ct_spacing = np.asarray(ct_image.GetSpacing())
@@ -313,10 +314,10 @@ class NoduleDataset(Dataset):
             filename_prefix = f"{self.sub_vol_path}{pid}_{str(nid)}_iso{iso_voxel_size:.2f}_"
 
             # resample to be isotropic voxel
-            ct_image = image_resample(ct_image, iso_voxel_size=iso_voxel_size)
-            ard_image = image_resample(ard_image, iso_voxel_size=iso_voxel_size)
-            label = image_resample(label, iso_voxel_size=iso_voxel_size, is_label=True)
-            spike_label = image_resample(spike_label, iso_voxel_size=iso_voxel_size, is_label=True)\
+            #ct_image = image_resample(ct_image, iso_voxel_size=iso_voxel_size)
+            #ard_image = image_resample(ard_image, iso_voxel_size=iso_voxel_size)
+            #label = image_resample(label, iso_voxel_size=iso_voxel_size, is_label=True)
+            #spike_label = image_resample(spike_label, iso_voxel_size=iso_voxel_size, is_label=True)
             
             # crop or pad 
             diff_np = np.asarray(ct_image.GetSize()) - np.asarray(self.crop_size)
@@ -336,7 +337,6 @@ class NoduleDataset(Dataset):
             self.list += create_sub_volumes(ct_image, ard_image, label, spike_label,
                                             samples=self.samples, crop_size=self.crop_size,
                                             filename_prefix=filename_prefix, th_percent=self.threshold)
-            nid += 1
 
     def create_input_data(self):
         make_dirs(self.sub_vol_path)

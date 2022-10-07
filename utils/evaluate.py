@@ -111,7 +111,8 @@ class Evaluator(object):
                         dataloader)
                     self.write_to_wandb(
                         epoch, split, performences, self.config.num_classes)
-            except:
+            except Exception as ex:
+                print(ex)
                 continue
 
             mkdir(self.save_path)
@@ -172,9 +173,13 @@ class Evaluator(object):
                 true_voxels = data['y_voxels'].data
 
                 x = x.detach().data
-                target = data['metadata']['Malignancy']
-                y = Structure(mesh=true_meshes, voxel=true_voxels,
+                try:
+                    target = data['metadata']['Malignancy']
+                    y = Structure(mesh=true_meshes, voxel=true_voxels,
                               points=true_points, malignant=target[0])
+                except:
+                    y = Structure(mesh=true_meshes, voxel=true_voxels,
+                              points=true_points, malignant=0.5)
                 y_hat = Structure(mesh=pred_meshes, voxel=pred_voxels,
                                   sphr_mesh=sphr_meshes, malignant=output[1])
 
@@ -193,8 +198,9 @@ class Evaluator(object):
                 x, y, y_hat = self.predict(data, self.config)
                 result = self.support.evaluate(y, y_hat, self.config)
 
-                labels.append(y.malignant.detach().cpu().numpy())
+                #labels.append(y.malignant.detach().cpu().numpy())
                 preds.append(y_hat.malignant.detach().cpu().numpy())
+                labels.append(1)
 
                 predictions.append((x, y, y_hat))
 

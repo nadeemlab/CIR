@@ -89,23 +89,28 @@ def main():
     print("Load pre-processed data")
     data_obj = cfg.data_obj
     data_obj_ext = cfg.data_obj_ext
-    data = data_obj.quick_load_data(cfg, trial_id)
+    data_obj_ext1 = cfg.data_obj_ext1
+    #data = data_obj.quick_load_data(cfg, trial_id)
     #data_wo3 = data_obj.quick_load_data_wo3(cfg, trial_id)
-    data_ext = data_obj_ext.quick_load_data(cfg, trial_id)
+    #data_ext = data_obj_ext.quick_load_data(cfg, trial_id)
+    data_ext1 = data_obj_ext1.quick_load_data(cfg, trial_id)
 
     print("Initialize evaluator")
-    evaluator = Evaluator(classifier, optimizer, data,
-                          trial_path, cfg, data_obj)
+    #evaluator = Evaluator(classifier, optimizer, data,
+    #                      trial_path, cfg, data_obj)
     #evaluator_wo3 = Evaluator(classifier, optimizer, data_wo3, trial_path, cfg, data_obj)
-    evaluator_ext = Evaluator(classifier, optimizer,
-                              data_ext, trial_path, cfg, data_obj_ext)
+    #evaluator_ext = Evaluator(classifier, optimizer,
+    #                          data_ext, trial_path, cfg, data_obj_ext)
+    evaluator_ext1 = Evaluator(classifier, optimizer,
+                              data_ext1, trial_path, cfg, data_obj_ext1)
 
-    print("\nLIDC_123vs45")
-    evaluator.evaluate_all(epoch)
+    #print("\nLIDC_123vs45")
+    #evaluator.evaluate_all(epoch)
     # print("\nLIDC_12vs45")
     # evaluator_wo3.evaluate_all(epoch)
-    print("\nLUNGx")
-    evaluator_ext.evaluate_all(epoch)
+    #print("\nLUNGx")
+    #evaluator_ext.evaluate_all(epoch)
+    evaluator_ext1.evaluate_all(epoch)
     
     wandb.finish()
 

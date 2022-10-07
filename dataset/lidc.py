@@ -65,10 +65,10 @@ class LIDCDataset():
         #print(self.pids[idx])
         item = get_item(item, self.mode, self.cfg) 
         item['pid'] = self.pids[idx].upper()
-        item['nid'] = int(self.nids[idx])
-        self.metadata.loc[:, "PID"] = self.metadata.PID.apply(lambda x : x.upper())
+        #item['nid'] = int(self.nids[idx])
+        #self.metadata.loc[:, "PID"] = self.metadata.PID.apply(lambda x : x.upper())
 
-        item['metadata'] = self.metadata.query(f"PID=='{item['pid']}'").iloc[item['nid']-1].to_dict()
+        #item['metadata'] = self.metadata.query(f"PID=='{item['pid']}'").iloc[item['nid']-1].to_dict()
     
         return item
 

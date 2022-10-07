@@ -158,7 +158,7 @@ class Voxel2Mesh(nn.Module):
         ''' Final layer (for voxel decoder)'''
         self.final_layer = ConvLayer(in_channels=config.first_layer_channels, out_channels=config.num_classes, kernel_size=1)
 
-        sphere_path='./spheres/icosahedron_{}.obj'.format(42)
+        sphere_path='./spheres/icosahedron_{}.obj'.format(162)
         sphere_vertices, sphere_faces = read_obj(sphere_path)
         sphere_vertices = torch.from_numpy(sphere_vertices).cuda(self.config.device).float()
         self.sphere_vertices = sphere_vertices/torch.sqrt(torch.sum(sphere_vertices**2,dim=1)[:,None])[None]
