@@ -63,7 +63,7 @@ def main():
     )), lr=cfg.learning_rate, weight_decay=cfg.weight_decay)
 
     print("Load pre-processed data")
-    data_obj = cfg.data_obj
+    data_obj = cfg.data_obj_ext1 #cfg.data_obj
     data = data_obj.quick_load_data(cfg, trial_id)
 
     loader = DataLoader(data[DataModes.TRAINING],
@@ -90,7 +90,6 @@ def main():
         epoch = 1
 
     trainer.train(start_epoch=epoch)
-
 
 if __name__ == "__main__":
     main()

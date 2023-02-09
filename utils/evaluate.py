@@ -174,7 +174,7 @@ class Evaluator(object):
 
                 x = x.detach().data
                 try:
-                    target = data['metadata']['Malignancy']
+                    target = data['metadata']['label']
                     y = Structure(mesh=true_meshes, voxel=true_voxels,
                               points=true_points, malignant=target[0])
                 except:
@@ -197,10 +197,10 @@ class Evaluator(object):
                 teval.set_description(f"Evaluation")
                 x, y, y_hat = self.predict(data, self.config)
                 result = self.support.evaluate(y, y_hat, self.config)
-
-                #labels.append(y.malignant.detach().cpu().numpy())
+                
+                labels.append(y.malignant.detach().cpu().numpy())
                 preds.append(y_hat.malignant.detach().cpu().numpy())
-                labels.append(1)
+                # labels.append(1)
 
                 predictions.append((x, y, y_hat))
 
@@ -213,6 +213,7 @@ class Evaluator(object):
 
         labels = np.asarray(labels)
         preds = np.asarray(preds)
+        
         fpr, tpr, thresholds = roc_curve(labels, preds, pos_label=1)
         #t = thresholds[np.sqrt((1-fpr)**2+tpr**2).argmax()]
         t = 0.5

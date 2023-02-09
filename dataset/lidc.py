@@ -62,17 +62,14 @@ class LIDCDataset():
 
     def __getitem__(self, idx):
         item = self.data[idx] 
-        #print(self.pids[idx])
+        # print(self.pids[idx])
         item = get_item(item, self.mode, self.cfg) 
         item['pid'] = self.pids[idx].upper()
         #item['nid'] = int(self.nids[idx])
-        #self.metadata.loc[:, "PID"] = self.metadata.PID.apply(lambda x : x.upper())
-
-        #item['metadata'] = self.metadata.query(f"PID=='{item['pid']}'").iloc[item['nid']-1].to_dict()
-    
+        self.metadata.loc[:, "PID"] = self.metadata.PID.apply(lambda x : x.upper())
+        item['metadata'] = self.metadata.query(f"PID=='{item['pid']}'").iloc[0].to_dict()
+        
         return item
-
-  
 
 class LIDC():
     def pick_surface_points(self, y_outer, point_count):
@@ -182,7 +179,7 @@ class LIDC():
                 metadata_.loc[:, "Malignancy"] = metadata72.PMalignancy.values == 2
             else:
                 metadata_ = metadata.loc[metadata.PID.isin(sample_pids)]
-            print(metadata_)
+                
             new_samples = sample_to_sample_plus(samples, cfg, datamode)
             with open(data_root + '/pre_computed_data_{}_{}.pickle'.format(datamode, "_".join(map(str, down_sample_shape))), 'wb') as handle:
                 pickle.dump((new_samples, samples, sample_pids, sample_nids, metadata_), handle, protocol=pickle.HIGHEST_PROTOCOL)

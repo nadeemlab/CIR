@@ -48,7 +48,7 @@ def get_item(item, mode, config):
     y = item.y.cuda(config.device)  
     y_outer = item.y_outer.cuda(config.device)   
     shape = item.shape  
-
+    
    # print("Y1", y.unique(), flush=True)
 
     # augmentation done only during training
@@ -88,7 +88,7 @@ def get_item(item, mode, config):
         theta_scale = stns.scale(scale) 
 
         theta = theta_rotate @ theta_shift @ theta_scale
- 
+        
         x, y, y_outer = stns.transform(theta, x, y, y_outer) 
   
     #print("Y", y.unique(), flush=True)
